@@ -1,0 +1,35 @@
+kind: ConfigMap 
+apiVersion: v1 
+metadata:
+  name: keycloak-configmap
+  labels:        
+    partof: keycloak
+    created-by: Ed-Mar
+data:
+  # Configuration values can be set as key-value properties
+  PROXY_ADDRESS_FORWARDING: ture
+  DB_ADDR: postgres-keycloak-statefulset #Should be the host name of the postgres statefulset
+  DB_VENDOR: postgres
+  DB_DATABASE: keycloak ## 'keycloak' is the default
+  KEYCLOAK_ADMIN_URL: administratum.appalachian-bastion.tech/auth/realms/master/admin/
+  KEYCLOAK_FRONTEND_URL: administratum.appalachian-bastion.tech/auth/
+  ##DB_SCHEMA:
+  
+###https://github.com/keycloak/keycloak-containers/blob/master/server/README.md
+#DB_VENDOR value is not specified the image will try to detect the DB vendor based on the following logic:
+
+#Is the default host name for the DB set using getent hosts (postgres, mysql, mariadb, oracle, mssql). This works if you are using a user defined network and the default names as specified below.
+#Is there a DB specific _ADDR environment variable set (POSTGRES_ADDR, MYSQL_ADDR, MARIADB_ADDR, ORACLE_ADDR). Deprecated
+#If the DB can't be detected it will default to the embedded H2 database.
+
+##Environment variables
+#Generic variable names can be used to configure any Database type, defaults may vary depending on the Database.
+
+#DB_ADDR: Specify hostname of the database (optional). For postgres only, you can provide a list of hostnames separated by comma to failover alternative host. The hostname can be the host only or pair of host and port, as example host1,host2 or host1:5421,host2:5436 or host1,host2:5000. And keycloak will append DB_PORT (if specify) to the hosts without port, otherwise it will append the default port 5432, again to the address without port only.
+#DB_PORT: Specify port of the database (optional, default is DB vendor default port)
+#DB_DATABASE: Specify name of the database to use (optional, default is keycloak).
+#DB_SCHEMA: Specify name of the schema to use for DB that support schemas (optional, default is public on Postgres).
+#DB_USER: Specify user to use to authenticate to the database (optional, default is ``).
+#DB_USER_FILE: Specify user to authenticate to the database via file input (alternative to DB_USER).
+#DB_PASSWORD: Specify user's password to use to authenticate to the database (optional, default is ``).
+#DB_PASSWORD_FILE: Specify user's password to use to authenticate to the database via file input (alternative to DB_PASSWORD).

@@ -1,0 +1,74 @@
+# PostgreSQL StatefulSet
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres-keycloak-statefulset
+spec:
+  serviceName: postgres-keycloak-service
+  selector:
+    matchLabels:
+      app: postgres-keycloak
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: postgres-keycloak
+        component: database
+        partof: keycloak
+        created-by: Ed-Mar    
+    spec:
+      containers:
+        - name: postgres-keycloak
+          image: postgres:latest
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: postgres-keycloak-disk
+              mountPath: /data
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-keycloak-auth-secret
+                  key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-keycloak-auth-secret
+                  key: password
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-keycloak-configmap
+                  key: POSTGRES_DB
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - /bin/sh
+                  - -c
+                  - su - postgres -c "pg_ctl stop -m fast"
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - exec pg_isready -U $POSTGRES_USER -d $POSTGRES_DB -h 127.1 -p 5432
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - -e
+                - exec pg_isready -U $POSTGRES_USER -d $POSTGRES_DB -h 127.1 -p 5432
+  # Volume Claim
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-keycloak-disk
+        labels:
+          partof: keycloak
+      spec:
+        storageClassName: linode-block-storage-retain
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 20Gi

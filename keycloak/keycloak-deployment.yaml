@@ -1,0 +1,107 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak
+  namespace: default
+  labels:
+    app: keycloak
+    partof: keycloak
+    created-by: Ed-Mar
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: keycloak
+  template:
+    metadata:
+      labels:
+        app: keycloak
+        created-by: Ed-Mar
+    spec:
+      containers:
+      - name: keycloak
+        image: quay.io/keycloak/keycloak:latest
+        env:
+          - name: KEYCLOAK_USER
+            valueFrom:
+              secretKeyRef:
+                name: keycloak-auth-secret
+                key: username
+          - name: KEYCLOAK_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: keycloak-auth-secret
+                key: password
+          - name: DB_USER
+            valueFrom:
+              secretKeyRef:
+                name: postgres-keycloak-auth-secret
+                key: username
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: postgres-keycloak-auth-secret
+                key: password
+          - name: PROXY_ADDRESS_FORWARDING
+            valueFrom:
+              configMapKeyRef:
+                name: keycloak-configmap
+                key: PROXY_ADDRESS_FORWARDING
+          - name: DB_VENDOR
+            valueFrom:
+              configMapKeyRef:
+                name: keycloak-configmap
+                key: DB_VENDOR
+          - name: DB_DATABASE
+            valueFrom:
+              configMapKeyRef:
+                name: keycloak-configmap
+                key: DB_DATABASE
+          - name: DB_ADDR ## Should have this pointed to the postgress configmapping
+            valueFrom:
+              configMapKeyRef:
+                name: keycloak-configmap
+                key: DB_ADDR
+          - name: KEYCLOAK_ADMIN_URL
+            valueFrom:
+              configMapKeyRef:
+                name: keycloak-configmap
+                key: KEYCLOAK_ADMIN_URL
+          - name: KEYCLOAK_FRONTEND_URL
+            valueFrom:
+              configMapKeyRef:
+                name: keycloak-configmap
+                key: KEYCLOAK_FRONTEND_URL              
+        ports:          
+          - containerPort: 443
+            name: https
+          - containerPort: 8080
+            name: http
+          - containerPort: 9990
+            name: admin
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: admin
+            scheme: HTTP
+          initialDelaySeconds: 30          
+          timeoutSeconds: 30            
+#        terminationMessagePath: /dev/termination-log
+#        terminationMessagePolicy: File  
+#        readinessProbe:
+#          httpGet:
+#            path: /auth/realms/master
+#            port: 8080
+#        livenessProbe:
+#            httpGet:
+#              path: /auth/
+#              port: http
+#            initialDelaySeconds: 30
+#            timeoutSeconds: 5    
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "500m"
+          limits:
+            memory: "1Gi"
+            cpu: "1250m"   
