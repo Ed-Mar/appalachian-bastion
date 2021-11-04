@@ -4,13 +4,16 @@ kind: Service
 metadata:
   name: postgres-keycloak-service
   labels:   
-    partof: postgres-keycloak   
+    partof: postgres-keycloak
+
+## headless Service
 spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+    - name: postgresk-ports
+      port: 5432
+      targetPort: postgresk-ports
+      protocol: TCP
   selector:
     app: postgres-keycloak
-  type: LoadBalancer
-  ports:
-    - name: postgres-keycloak-ports
-      port: 5432
-      targetPort: 5432
-      protocol: TCP
