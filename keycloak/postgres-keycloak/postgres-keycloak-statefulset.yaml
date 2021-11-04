@@ -40,6 +40,10 @@ spec:
                 configMapKeyRef:
                   name: postgres-keycloak-configmap
                   key: POSTGRES_DB
+          ports:
+            - name: postgresk-ports
+              containerPort: 5432
+              protocol: TCP
           lifecycle:
             preStop:
               exec:
@@ -53,6 +57,11 @@ spec:
                 - /bin/sh
                 - -c
                 - exec pg_isready -U $POSTGRES_USER -d $POSTGRES_DB -h 127.1 -p 5432
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 6
           readinessProbe:
             exec:
               command:
@@ -60,6 +69,11 @@ spec:
                 - -c
                 - -e
                 - exec pg_isready -U $POSTGRES_USER -d $POSTGRES_DB -h 127.1 -p 5432
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 7
   # Volume Claim
   volumeClaimTemplates:
     - metadata:
@@ -67,8 +81,8 @@ spec:
         labels:
           partof: keycloak
       spec:
-        storageClassName: linode-block-storage-retain
+        ##storageClassName: linode-block-storage-retain
         accessModes: ["ReadWriteOnce"]
         resources:
           requests:
-            storage: 20Gi
+            storage: 3Gi
