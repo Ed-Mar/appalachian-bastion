@@ -182,3 +182,4 @@ etc/keycloak-distroless/postgres-k8/postgres-pv.yaml
 /etc/keycloak-k8study/helm-keycloak/secerts/
 /etc/keycloak-k8study/
 /.vscode/
+/etc/
