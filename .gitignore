@@ -2,5 +2,5 @@
 .idea/
 .gitignore
 /.vscode/
-
+/Progress Reports/
 kubeconfig/

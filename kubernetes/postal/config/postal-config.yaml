@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postal-config
+  namespace: postal
+  labels:        
+    partof: postal
+    created-by: Ed-Mar
+stringdata:
+### Postal uses a Cli to config a lot of it slef
+####(https://github.com/postalserver/postal/blob/main/docker/ci-config/postal.yml)
+  ## ADMIN_FNAME 
+  admin-fristname: Post
+  ## ADMIN_LNAME
+  admin-lastname: Master
+
+#DNS Env Varibles
+  ##DNS_HOSTNAME
+  dns-hostname: postal.example.com
+  ##DNS_MX
+  dns-mx: mx.example.com  
+  ##DNS_RETURN_PATH 
+  dns-return-path: rp.example.com
+  ##DNS_ROUTE_DOMAIN
+  dns-route-domain: routes.postal.example.com
+  ##DNS_TRACK_DOMAIN
+  dns-track-domain: track.postal.example.com
+  ##DNS_SPF
+  dns-spf: spf.postal.example.com
+  ##DNS_DKIM_IDENTIFIER
+  dns-dkim-identifier: postal
+  ##DNS_DOMAIN_VERIFY_PREFIX
+  dns-domain-verify-prefix: example-verification
+
+#SMTP env Varables
+  ##SMTP_FROM_ADDRESS
+  smtp-from-address: noreply@example.com
+  ##SMTP_FROM_NAME
+  smtp-from-name: Postal
+  ##SMTP_HOST
+  smtp-host: 127.0.0.1
+  ## Ports 
+  
+  ##WEB_HOST
+  web-host: mx.example.com
+  ##WEB_PROTOCOL
+  web-protocol: https
+

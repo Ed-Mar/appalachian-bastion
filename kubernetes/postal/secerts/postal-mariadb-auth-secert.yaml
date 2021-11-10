@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postal-mariadb-auth-secert
+  namespace: postal
+  labels:        
+    partof: postal
+    created-by: Ed-Mar
+type: kubernetes.io/basic-auth
+stringData:  
+  ##ROOT_PASS
+  root-password: rootpassword      
+  ##DB_NAME
+  datebase-name: postal-mariadb    
+  ##DB_USER
+  datebase-username: postal       
+  ##DB_PASS
+  datebase-password: postalpass    
+
+       

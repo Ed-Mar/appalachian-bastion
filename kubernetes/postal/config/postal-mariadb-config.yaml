@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postal-mariadb-config
+  namespace: postal
+  labels:        
+    partof: postal
+    created-by: Ed-Mar
+stringdata:
+  ##DB_HOST
+  datebase-host: postal-mariadb-db
+  ##DB_PORT
+  datebase-port: 3306
+  ##CONTAINER_NAME=postal-db
