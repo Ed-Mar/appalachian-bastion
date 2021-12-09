@@ -22,15 +22,16 @@ type Server struct {
 // Servers a Collection of Server
 type Servers []*Server
 
-// FromJSON  serializes the contents of the collection to JSON
-// NewEncoder provides better performance than json.Unmarshal as it does not
-// have to buffer the output into an in memory slice of bytes
-// this reduces allocations and the overheads of the service
-//
-// https://golang.org/pkg/encoding/json/#NewEncoder
+// FromJSON  serializes the JSON of the collection to data
 func (server *Server) FromJSON(reader io.Reader) error {
 	e := json.NewDecoder(reader)
 	return e.Decode(server)
+}
+
+// ToJSON serializes the contents of the collection to JSON
+func (server *Servers) ToJSON(writer io.Writer) error {
+	e := json.NewEncoder(writer)
+	return e.Encode(server)
 }
 
 // GetServers returns a list of servers

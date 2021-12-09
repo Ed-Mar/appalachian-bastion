@@ -2,30 +2,33 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
-	"time"
 
 	"github.com/gorilla/mux"
+	"server-api/handler"
+	"time"
 )
 
 func main() {
 	logger := log.New(os.Stdout, "server-api", log.LstdFlags)
 
-	severRouter := mux.NewRouter()
-	ServerHandler :=
-		severRouter.HandleFunc("/resources", func(w http.ResponseWriter, r *http.Request) {
-			fmt.Fprintf(w, "/resources")
-		})
+	serverHandler := handler.NewServers(logger)
+
+	serveMux := mux.NewRouter()
+
+	getRouter := serveMux.Methods(http.MethodGet).Subrouter()
+	getRouter.HandleFunc("/", serverHandler.GetServers)
 
 	srv := &http.Server{
-		Handler:      severRouter,
-		Addr:         ":9090",
-		WriteTimeout: 15 * time.Second,
-		ReadTimeout:  15 * time.Second,
+		Addr:         ":9090",           // configure the bind address
+		Handler:      serveMux,          // set the default handler
+		ErrorLog:     logger,            // set the logger for the server
+		ReadTimeout:  5 * time.Second,   // max time to read request from the client
+		WriteTimeout: 10 * time.Second,  // max time to write response to the client
+		IdleTimeout:  120 * time.Second, // max time for connections using TCP Keep-Alive
 	}
 
 	// start the server
