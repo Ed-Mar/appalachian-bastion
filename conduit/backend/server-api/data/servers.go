@@ -5,12 +5,14 @@ import (
 	"fmt"
 	"io"
 	"time"
+
+	"github.com/go-playground/validator"
 )
 
 // Server  defines structure for an API for Server
 type Server struct {
-	ID          int    `json:"id"`
-	Name        string `json:"name"`
+	ID          int    `json:"id" validate:"required"`
+	Name        string `json:"name" validate:"required"`
 	Description string `json:"description"`
 	//TODO  implement 'Channel' Data structure for the severs struct
 	//Channels 	[]
@@ -21,6 +23,11 @@ type Server struct {
 
 // Servers a Collection of Server
 type Servers []*Server
+
+func (server *Server) Validate() error {
+	validate := validator.New()
+	return validate.Struct(server)
+}
 
 // FromJSON  serializes the JSON of the collection to data
 func (server *Server) FromJSON(reader io.Reader) error {
@@ -38,6 +45,18 @@ func (server *Servers) ToJSON(writer io.Writer) error {
 func GetServers() Servers {
 	return serverList
 }
+func UpdateServer(id int, server *Server) error {
+	_, pos, err := findServer(id)
+	if err != nil {
+		return err
+	}
+	server.ID = id
+	serverList[pos] = server
+
+	return nil
+}
+
+var ErrServerNotFound = fmt.Errorf("server not found")
 
 // findServer returns a server when given a matching server id
 func findServer(id int) (*Server, int, error) {
@@ -46,20 +65,19 @@ func findServer(id int) (*Server, int, error) {
 			return server, i, nil
 		}
 	}
-	var ErrServerNotFound = fmt.Errorf("server not found")
 	return nil, -1, ErrServerNotFound
 }
 
 // serverList local data set for development
 var serverList = []*Server{
-	&Server{
+	{
 		ID:          1,
 		Name:        "Server 1",
 		Description: "Joking and Smoking",
 		CreatedOn:   time.Now().UTC().String(),
 		UpdatedOn:   time.Now().UTC().String(),
 	},
-	&Server{
+	{
 		ID:          2,
 		Name:        "Server 2",
 		Description: "Smoking and Joking",

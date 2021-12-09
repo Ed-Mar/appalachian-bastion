@@ -22,6 +22,10 @@ func main() {
 	getRouter := serveMux.Methods(http.MethodGet).Subrouter()
 	getRouter.HandleFunc("/", serverHandler.GetServers)
 
+	putRouter := serveMux.Methods(http.MethodPut).Subrouter()
+	putRouter.HandleFunc("/{id:[0-9]+}", serverHandler.UpdateServers)
+	putRouter.Use(serverHandler.MiddlewareValidateServer)
+
 	srv := &http.Server{
 		Addr:         ":9090",           // configure the bind address
 		Handler:      serveMux,          // set the default handler
