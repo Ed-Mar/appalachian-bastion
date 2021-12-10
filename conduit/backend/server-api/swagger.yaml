@@ -1,7 +1,7 @@
 basePath: /
 consumes:
 - application/json
-- 'servuces:'
+- 'services:'
 - application/json
 definitions:
   GenericError:
