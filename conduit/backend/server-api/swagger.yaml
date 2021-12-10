@@ -1,0 +1,166 @@
+basePath: /
+consumes:
+- application/json
+- 'servuces:'
+- application/json
+definitions:
+  GenericError:
+    description: GenericError is a generic error message returned by a server
+    properties:
+      message:
+        type: string
+        x-go-name: Message
+    type: object
+    x-go-package: server-api/handlers
+  Server:
+    description: Server defines the structure for an API server
+    properties:
+      description:
+        description: the description for this server
+        maxLength: 1000
+        type: string
+        x-go-name: Description
+      id:
+        description: the id for the server
+        format: int64
+        minimum: 1
+        type: integer
+        x-go-name: ID
+      name:
+        description: the name for this server
+        maxLength: 255
+        type: string
+        x-go-name: Name
+    required:
+    - name
+    type: object
+    x-go-package: server-api/data
+  ValidationError:
+    description: ValidationError is a collection of validation error messages
+    properties:
+      messages:
+        items:
+          type: string
+        type: array
+        x-go-name: Messages
+    type: object
+    x-go-package: server-api/handlers
+info:
+  description: Documentation for Server API
+  title: classification of Server API
+  version: 0.0.1
+paths:
+  /servers:
+    get:
+      description: Return a list of servers from the database
+      operationId: listServers
+      responses:
+        "200":
+          $ref: '#/responses/serversResponse'
+      tags:
+      - servers
+    post:
+      description: Create a new server
+      operationId: createServer
+      parameters:
+      - description: |-
+          server data structure to Update or Create.
+          Note: the id field is ignored by update and create operations
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/Server'
+      responses:
+        "200":
+          $ref: '#/responses/ServerResponse'
+        "422":
+          $ref: '#/responses/errorValidation'
+        "501":
+          $ref: '#/responses/errorResponse'
+      tags:
+      - servers
+    put:
+      description: Update a servers details
+      operationId: updateServer
+      parameters:
+      - description: |-
+          server data structure to Update or Create.
+          Note: the id field is ignored by update and create operations
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/Server'
+      responses:
+        "201":
+          $ref: '#/responses/noContentResponse'
+        "404":
+          $ref: '#/responses/errorResponse'
+        "422":
+          $ref: '#/responses/errorValidation'
+      tags:
+      - servers
+  /servers/{id}:
+    delete:
+      description: Update a servers details
+      operationId: deleteServer
+      parameters:
+      - description: The id of the server for which the operation relates
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+        x-go-name: ID
+      responses:
+        "201":
+          $ref: '#/responses/noContentResponse'
+        "404":
+          $ref: '#/responses/errorResponse'
+        "501":
+          $ref: '#/responses/errorResponse'
+      tags:
+      - servers
+    get:
+      description: Return a list of servers from the database
+      operationId: listSingleServer
+      parameters:
+      - description: The id of the server for which the operation relates
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+        x-go-name: ID
+      responses:
+        "200":
+          $ref: '#/responses/serverResponse'
+        "404":
+          $ref: '#/responses/errorResponse'
+      tags:
+      - servers
+responses:
+  ServerResponse:
+    description: Data structure representing a single Server
+    schema:
+      $ref: '#/definitions/Server'
+  ServersResponse:
+    description: A list of servers
+    schema:
+      items:
+        $ref: '#/definitions/Server'
+      type: array
+  errorResponse:
+    description: Generic error message returned as a string
+    schema:
+      $ref: '#/definitions/GenericError'
+  errorValidation:
+    description: Validation errors defined as an array of strings
+    schema:
+      $ref: '#/definitions/ValidationError'
+  noContentResponse:
+    description: No content is returned by this API endpoint
+schemes:
+- http
+swagger: "2.0"

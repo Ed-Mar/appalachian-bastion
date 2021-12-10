@@ -1,71 +1,102 @@
 package data
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
-	"time"
-
-	"github.com/go-playground/validator"
 )
 
-// Server  defines structure for an API for Server
+// ErrServerNotFound is an error raised when a server can not be found in the database
+var ErrServerNotFound = fmt.Errorf("server not found")
+
+// Server defines the structure for an API server
+// swagger:model
 type Server struct {
-	ID          int    `json:"id" validate:"required"`
-	Name        string `json:"name" validate:"required"`
+	// the id for the server
+	//
+	// required: false
+	// min: 1
+	ID int `json:"id"` // Unique identifier for the server
+
+	// the name for this server
+	//
+	// required: true
+	// max length: 255
+	Name string `json:"name" validate:"required"`
+
+	// the description for this server
+	//
+	// required: false
+	// max length: 1000
 	Description string `json:"description"`
-	//TODO  implement 'Channel' Data structure for the severs struct
-	//Channels 	[]
-	CreatedOn string `json:"-"`
-	UpdatedOn string `json:"-"`
-	DeletedOn string `json:"-"`
 }
 
-// Servers a Collection of Server
+// Servers defines a slice of Server
 type Servers []*Server
 
-func (server *Server) Validate() error {
-	validate := validator.New()
-	return validate.Struct(server)
-}
-
-// FromJSON  serializes the JSON of the collection to data
-func (server *Server) FromJSON(reader io.Reader) error {
-	e := json.NewDecoder(reader)
-	return e.Decode(server)
-}
-
-// ToJSON serializes the contents of the collection to JSON
-func (server *Servers) ToJSON(writer io.Writer) error {
-	e := json.NewEncoder(writer)
-	return e.Encode(server)
-}
-
-// GetServers returns a list of servers
+// GetServers returns all servers from the database
 func GetServers() Servers {
 	return serverList
 }
-func UpdateServer(id int, server *Server) error {
-	_, pos, err := findServer(id)
-	if err != nil {
-		return err
+
+// GetServerByID returns a single server which matches the id from the
+// database.
+// If a server is not found this function returns a ServerNotFound error
+func GetServerByID(id int) (*Server, error) {
+	i := findIndexByServerID(id)
+	if id == -1 {
+		return nil, ErrServerNotFound
 	}
-	server.ID = id
-	serverList[pos] = server
+
+	return serverList[i], nil
+}
+
+// UpdateServer replaces a server in the database with the given item.
+// If a server with the given id does not exist in the database
+// this function returns a ServerNotFound error
+func UpdateServer(server Server) error {
+	i := findIndexByServerID(server.ID)
+	if i == -1 {
+		return ErrServerNotFound
+	}
+
+	// update the server in the DB
+	serverList[i] = &server
 
 	return nil
 }
 
-var ErrServerNotFound = fmt.Errorf("server not found")
+// AddServer adds a new server to the database
+//TODO interface with keycloak to remove that permissions in the role listing
+func AddServer(server Server) {
+	// get the next id in sequence
+	maxID := serverList[len(serverList)-1].ID
+	server.ID = maxID + 1
+	serverList = append(serverList, &server)
+}
 
-// findServer returns a server when given a matching server id
-func findServer(id int) (*Server, int, error) {
+// DeleteServer deletes a server from the database
+//TODO interface with keycloak to remove that permissions in the role listing
+func DeleteServer(id int) error {
+	i := findIndexByServerID(id)
+	if i == -1 {
+		return ErrServerNotFound
+	}
+
+	serverList = append(serverList[:i], serverList[i+1])
+
+	return nil
+}
+
+// findIndexByServerID finds the index of a server in the database
+// internal
+// returns -1 when no server can be found
+func findIndexByServerID(id int) int {
 	for i, server := range serverList {
 		if server.ID == id {
-			return server, i, nil
+			return i
 		}
 	}
-	return nil, -1, ErrServerNotFound
+
+	return -1
 }
 
 // serverList local data set for development
@@ -74,14 +105,10 @@ var serverList = []*Server{
 		ID:          1,
 		Name:        "Server 1",
 		Description: "Joking and Smoking",
-		CreatedOn:   time.Now().UTC().String(),
-		UpdatedOn:   time.Now().UTC().String(),
 	},
 	{
 		ID:          2,
 		Name:        "Server 2",
 		Description: "Smoking and Joking",
-		CreatedOn:   time.Now().UTC().String(),
-		UpdatedOn:   time.Now().UTC().String(),
 	},
 }

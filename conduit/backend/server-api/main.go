@@ -6,29 +6,48 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-
-	"github.com/gorilla/mux"
-	"server-api/handler"
 	"time"
+
+	"server-api/data"
+	"server-api/handlers"
+
+	"github.com/go-openapi/runtime/middleware"
+	"github.com/gorilla/mux"
 )
 
 func main() {
 	logger := log.New(os.Stdout, "server-api", log.LstdFlags)
+	validation := data.NewValidation()
 
-	serverHandler := handler.NewServers(logger)
+	serverHandler := handlers.NewServers(logger, validation)
 
 	serveMux := mux.NewRouter()
 
 	getRouter := serveMux.Methods(http.MethodGet).Subrouter()
-	getRouter.HandleFunc("/", serverHandler.GetServers)
+	getRouter.HandleFunc("/servers", serverHandler.ListAll)
+	getRouter.HandleFunc("/servers/{id:[0-9]+}", serverHandler.ListSingle)
 
 	putRouter := serveMux.Methods(http.MethodPut).Subrouter()
-	putRouter.HandleFunc("/{id:[0-9]+}", serverHandler.UpdateServers)
+	putRouter.HandleFunc("/servers", serverHandler.Update)
 	putRouter.Use(serverHandler.MiddlewareValidateServer)
+
+	postRouter := serveMux.Methods(http.MethodPost).Subrouter()
+	postRouter.HandleFunc("/servers", serverHandler.Create)
+	postRouter.Use(serverHandler.MiddlewareValidateServer)
+
+	deleteRouter := serveMux.Methods(http.MethodDelete).Subrouter()
+	deleteRouter.HandleFunc("/servers/{id:[0-9]+}", serverHandler.Delete)
+
+	// handler for documentation
+	opts := middleware.RedocOpts{SpecURL: "/swagger.yaml"}
+	sh := middleware.Redoc(opts, nil)
+
+	getRouter.Handle("/docs", sh)
+	getRouter.Handle("/swagger.yaml", http.FileServer(http.Dir("./")))
 
 	srv := &http.Server{
 		Addr:         ":9090",           // configure the bind address
-		Handler:      serveMux,          // set the default handler
+		Handler:      serveMux,          // set the default handlers
 		ErrorLog:     logger,            // set the logger for the server
 		ReadTimeout:  5 * time.Second,   // max time to read request from the client
 		WriteTimeout: 10 * time.Second,  // max time to write response to the client
@@ -46,7 +65,7 @@ func main() {
 		}
 	}()
 
-	// trap sigterm or interupt and gracefully shutdown the server
+	// trap sigterm or interrupt and gracefully shutdown the server
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
 	signal.Notify(c, os.Kill)

@@ -1,15 +1,43 @@
 package data
 
-import "testing"
+import (
+	"bytes"
+	"testing"
 
-func TestChecksValidation(t *testing.T) {
-	p := &Server{
-		ID:   69,
-		Name: "Y33t From the Mts",
-	}
-	err := p.Validate()
+	"github.com/stretchr/testify/assert"
+)
 
-	if err != nil {
-		t.Fatal(err)
+func TestServerMissingNameReturnsErr(t *testing.T) {
+	server := Server{
+		Description: "W H A T S H A P P I N G vol.8",
 	}
+
+	validator := NewValidation()
+	err := validator.Validate(server)
+	assert.Len(t, err, 1)
+}
+
+//TODO this error is returning nil need to handle it
+func TestValidServerDoesNOTReturnsErr(t *testing.T) {
+	server := Server{
+		ID:          413,
+		Name:        "Y33T in the Shade",
+		Description: "PHONK 808",
+	}
+
+	validator := NewValidation()
+	err := validator.Validate(server)
+	assert.Len(t, err, 1)
+}
+
+func TestServersToJSON(t *testing.T) {
+	ps := []*Server{
+		&Server{
+			Name: "S2",
+		},
+	}
+
+	b := bytes.NewBufferString("")
+	err := ToJSON(ps, b)
+	assert.NoError(t, err)
 }
