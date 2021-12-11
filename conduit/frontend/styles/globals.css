@@ -1,0 +1,27 @@
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family:  "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace; 
+  line-height: 1.6;
+  font-size: 18px;
+}
+
+* {
+  box-sizing: border-box;
+  box-shadow: 6px;
+}
+
+a {
+  color: #0070f3;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration:double;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
