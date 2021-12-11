@@ -9,7 +9,7 @@
 //	Consumes:
 //	- application/json
 //
-//	servuces:
+//	services:
 //	- application/json
 //
 // swagger:meta
