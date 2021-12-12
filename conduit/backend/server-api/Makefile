@@ -9,3 +9,4 @@ swagger:
 	@echo or use this makefile with "$make install_swagger"
 
 	swagger generate spec -o ./swagger.yaml --scan-models
+	swagger generate spec -o ./swagger.json --scan-models

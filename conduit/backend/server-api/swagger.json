@@ -1,0 +1,236 @@
+{
+  "consumes": [
+    "application/json",
+    "services:",
+    "application/json"
+  ],
+  "schemes": [
+    "http"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "description": "Documentation for Server API",
+    "title": "classification of Server API",
+    "version": "0.0.1"
+  },
+  "basePath": "/",
+  "paths": {
+    "/servers": {
+      "get": {
+        "description": "Return a list of servers from the database",
+        "tags": [
+          "servers"
+        ],
+        "operationId": "listServers",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/serversResponse"
+          }
+        }
+      },
+      "put": {
+        "description": "Update a servers details",
+        "tags": [
+          "servers"
+        ],
+        "operationId": "updateServer",
+        "parameters": [
+          {
+            "description": "server data structure to Update or Create.\nNote: the id field is ignored by update and create operations",
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Server"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "$ref": "#/responses/noContentResponse"
+          },
+          "404": {
+            "$ref": "#/responses/errorResponse"
+          },
+          "422": {
+            "$ref": "#/responses/errorValidation"
+          }
+        }
+      },
+      "post": {
+        "description": "Create a new server",
+        "tags": [
+          "servers"
+        ],
+        "operationId": "createServer",
+        "parameters": [
+          {
+            "description": "server data structure to Update or Create.\nNote: the id field is ignored by update and create operations",
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Server"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/ServerResponse"
+          },
+          "422": {
+            "$ref": "#/responses/errorValidation"
+          },
+          "501": {
+            "$ref": "#/responses/errorResponse"
+          }
+        }
+      }
+    },
+    "/servers/{id}": {
+      "get": {
+        "description": "Return a list of servers from the database",
+        "tags": [
+          "servers"
+        ],
+        "operationId": "listSingleServer",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "int64",
+            "x-go-name": "ID",
+            "description": "The id of the server for which the operation relates",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/serverResponse"
+          },
+          "404": {
+            "$ref": "#/responses/errorResponse"
+          }
+        }
+      },
+      "delete": {
+        "description": "Update a servers details",
+        "tags": [
+          "servers"
+        ],
+        "operationId": "deleteServer",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "int64",
+            "x-go-name": "ID",
+            "description": "The id of the server for which the operation relates",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "$ref": "#/responses/noContentResponse"
+          },
+          "404": {
+            "$ref": "#/responses/errorResponse"
+          },
+          "501": {
+            "$ref": "#/responses/errorResponse"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "GenericError": {
+      "description": "GenericError is a generic error message returned by a server",
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "x-go-name": "Message"
+        }
+      },
+      "x-go-package": "server-api/handlers"
+    },
+    "Server": {
+      "description": "Server defines the structure for an API server",
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "description": {
+          "description": "the description for this server",
+          "type": "string",
+          "maxLength": 1000,
+          "x-go-name": "Description"
+        },
+        "id": {
+          "description": "the id for the server",
+          "type": "integer",
+          "format": "int64",
+          "minimum": 1,
+          "x-go-name": "ID"
+        },
+        "name": {
+          "description": "the name for this server",
+          "type": "string",
+          "maxLength": 255,
+          "x-go-name": "Name"
+        }
+      },
+      "x-go-package": "server-api/data"
+    },
+    "ValidationError": {
+      "description": "ValidationError is a collection of validation error messages",
+      "type": "object",
+      "properties": {
+        "messages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-go-name": "Messages"
+        }
+      },
+      "x-go-package": "server-api/handlers"
+    }
+  },
+  "responses": {
+    "ServerResponse": {
+      "description": "Data structure representing a single Server",
+      "schema": {
+        "$ref": "#/definitions/Server"
+      }
+    },
+    "ServersResponse": {
+      "description": "A list of servers",
+      "schema": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/Server"
+        }
+      }
+    },
+    "errorResponse": {
+      "description": "Generic error message returned as a string",
+      "schema": {
+        "$ref": "#/definitions/GenericError"
+      }
+    },
+    "errorValidation": {
+      "description": "Validation errors defined as an array of strings",
+      "schema": {
+        "$ref": "#/definitions/ValidationError"
+      }
+    },
+    "noContentResponse": {
+      "description": "No content is returned by this API endpoint"
+    }
+  }
+}

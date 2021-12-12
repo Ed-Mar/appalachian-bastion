@@ -44,6 +44,7 @@ func main() {
 
 	getRouter.Handle("/docs", sh)
 	getRouter.Handle("/swagger.yaml", http.FileServer(http.Dir("./")))
+	getRouter.Handle("/swagger.json", http.FileServer(http.Dir("./")))
 
 	srv := &http.Server{
 		Addr:         ":9090",           // configure the bind address
