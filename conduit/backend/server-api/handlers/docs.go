@@ -9,9 +9,6 @@
 //	Consumes:
 //	- application/json
 //
-//	services:
-//	- application/json
-//
 // swagger:meta
 package handlers
 

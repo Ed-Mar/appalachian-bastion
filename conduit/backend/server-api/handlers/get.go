@@ -9,7 +9,7 @@ import (
 // swagger:route GET /servers servers listServers
 // Return a list of servers from the database
 // responses:
-//	200: serversResponse
+//	200: ServersResponse
 
 // ListAll handles GET requests and returns all current servers
 func (server *Servers) ListAll(rw http.ResponseWriter, r *http.Request) {
@@ -28,7 +28,7 @@ func (server *Servers) ListAll(rw http.ResponseWriter, r *http.Request) {
 // swagger:route GET /servers/{id} servers listSingleServer
 // Return a list of servers from the database
 // responses:
-//	200: serverResponse
+//	200: ServerResponse
 //	404: errorResponse
 
 // ListSingle handles GET requests

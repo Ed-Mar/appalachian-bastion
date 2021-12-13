@@ -1,7 +1,5 @@
 {
   "consumes": [
-    "application/json",
-    "services:",
     "application/json"
   ],
   "schemes": [
@@ -24,7 +22,7 @@
         "operationId": "listServers",
         "responses": {
           "200": {
-            "$ref": "#/responses/serversResponse"
+            "$ref": "#/responses/ServersResponse"
           }
         }
       },
@@ -107,7 +105,7 @@
         ],
         "responses": {
           "200": {
-            "$ref": "#/responses/serverResponse"
+            "$ref": "#/responses/ServerResponse"
           },
           "404": {
             "$ref": "#/responses/errorResponse"
