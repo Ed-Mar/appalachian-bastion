@@ -12,6 +12,7 @@ import (
 	"server-api/handlers"
 
 	"github.com/go-openapi/runtime/middleware"
+	gohandlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
 
@@ -46,13 +47,15 @@ func main() {
 	getRouter.Handle("/swagger.yaml", http.FileServer(http.Dir("./")))
 	getRouter.Handle("/swagger.json", http.FileServer(http.Dir("./")))
 
+	corsHandler := gohandlers.CORS(gohandlers.AllowedOrigins([]string{"http://localhost:3000"}))
+
 	srv := &http.Server{
-		Addr:         ":9090",           // configure the bind address
-		Handler:      serveMux,          // set the default handlers
-		ErrorLog:     logger,            // set the logger for the server
-		ReadTimeout:  5 * time.Second,   // max time to read request from the client
-		WriteTimeout: 10 * time.Second,  // max time to write response to the client
-		IdleTimeout:  120 * time.Second, // max time for connections using TCP Keep-Alive
+		Addr:         ":9090",               // configure the bind address
+		Handler:      corsHandler(serveMux), // set the default handlers
+		ErrorLog:     logger,                // set the logger for the server
+		ReadTimeout:  5 * time.Second,       // max time to read request from the client
+		WriteTimeout: 10 * time.Second,      // max time to write response to the client
+		IdleTimeout:  120 * time.Second,     // max time for connections using TCP Keep-Alive
 	}
 
 	// start the server
