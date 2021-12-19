@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"strconv"
 
+	"backend/server-api/data"
 	"github.com/gorilla/mux"
-	"server-api/data"
 )
 
 // KeyServer is a key used for the Server object in the context
@@ -15,13 +15,13 @@ type KeyServer struct{}
 
 // Servers handlers for getting and updating servers
 type Servers struct {
-	logger    *log.Logger
-	validator *data.Validation
+	severAPILogger *log.Logger
+	validator      *data.Validation
 }
 
-// NewServers returns a new servers handlers with the given logger
-func NewServers(logger *log.Logger, validator *data.Validation) *Servers {
-	return &Servers{logger, validator}
+// NewServers returns a new servers handlers with the given severAPILogger
+func NewServers(severAPILogger *log.Logger, validator *data.Validation) *Servers {
+	return &Servers{severAPILogger, validator}
 }
 
 // ErrInvalidServerPath is an error message when the server path is not valid

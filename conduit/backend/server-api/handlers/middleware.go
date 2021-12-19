@@ -1,9 +1,9 @@
 package handlers
 
 import (
+	"backend/server-api/data"
 	"context"
 	"net/http"
-	"server-api/data"
 )
 
 // MiddlewareValidateServer validates the server in the request and calls next if ok
@@ -15,7 +15,7 @@ func (server *Servers) MiddlewareValidateServer(next http.Handler) http.Handler 
 
 		err := data.FromJSON(serv, r.Body)
 		if err != nil {
-			server.logger.Println("[ERROR] deserializing server", err)
+			server.severAPILogger.Println("[ERROR] deserializing server", err)
 
 			rw.WriteHeader(http.StatusBadRequest)
 			data.ToJSON(&GenericError{Message: err.Error()}, rw)
@@ -25,7 +25,7 @@ func (server *Servers) MiddlewareValidateServer(next http.Handler) http.Handler 
 		// validate the server
 		errs := server.validator.Validate(serv)
 		if len(errs) != 0 {
-			server.logger.Println("[ERROR] validating server", errs)
+			server.severAPILogger.Println("[ERROR] validating server", errs)
 
 			// return the validation messages as an array
 			rw.WriteHeader(http.StatusUnprocessableEntity)

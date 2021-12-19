@@ -12,7 +12,7 @@
 // swagger:meta
 package handlers
 
-import "server-api/data"
+import "backend/server-api/data"
 
 // Generic error message returned as a string
 // swagger:response errorResponse

@@ -1,9 +1,8 @@
 package handlers
 
 import (
+	"backend/server-api/data"
 	"net/http"
-
-	"server-api/data"
 )
 
 // swagger:route POST /servers servers createServer
@@ -19,6 +18,6 @@ func (server *Servers) Create(rw http.ResponseWriter, r *http.Request) {
 	// fetch the server from the context
 	srev := r.Context().Value(KeyServer{}).(data.Server)
 
-	server.logger.Printf("[DEBUG] Inserting server: %#validator\n", srev)
+	server.severAPILogger.Printf("[DEBUG] Inserting server: %#validator\n", srev)
 	data.AddServer(srev)
 }

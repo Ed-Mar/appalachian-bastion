@@ -3,7 +3,7 @@ package handlers
 import (
 	"net/http"
 
-	"server-api/data"
+	"backend/server-api/data"
 )
 
 // swagger:route PUT /servers servers updateServer
@@ -20,11 +20,11 @@ func (server *Servers) Update(rw http.ResponseWriter, r *http.Request) {
 
 	// fetch the server from the context
 	serv := r.Context().Value(KeyServer{}).(data.Server)
-	server.logger.Println("[DEBUG] updating record id", serv.ID)
+	server.severAPILogger.Println("[DEBUG] updating record id", serv.ID)
 
 	err := data.UpdateServer(serv)
 	if err == data.ErrServerNotFound {
-		server.logger.Println("[ERROR] server not found", err)
+		server.severAPILogger.Println("[ERROR] server not found", err)
 
 		rw.WriteHeader(http.StatusNotFound)
 		data.ToJSON(&GenericError{Message: "Server not found in database"}, rw)
