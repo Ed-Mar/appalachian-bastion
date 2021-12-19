@@ -8,8 +8,9 @@ import (
 	"os/signal"
 	"time"
 
-	"server-api/data"
-	"server-api/handlers"
+	"backend/server-api/data"
+	"backend/server-api/handlers"
+	"backend/server-api/internal"
 
 	"github.com/go-openapi/runtime/middleware"
 	gohandlers "github.com/gorilla/handlers"
@@ -17,10 +18,12 @@ import (
 )
 
 func main() {
-	logger := log.New(os.Stdout, "server-api", log.LstdFlags)
+	severAPILogger := log.New(os.Stdout, "server-api | ", log.LstdFlags)
+	//databaseAPILogger := log.New(os.Stdout, "postgres-db | ", log.LstdFlags)
+
 	validation := data.NewValidation()
 
-	serverHandler := handlers.NewServers(logger, validation)
+	serverHandler := handlers.NewServers(severAPILogger, validation)
 
 	serveMux := mux.NewRouter()
 
@@ -52,7 +55,7 @@ func main() {
 	srv := &http.Server{
 		Addr:         ":9090",               // configure the bind address
 		Handler:      corsHandler(serveMux), // set the default handlers
-		ErrorLog:     logger,                // set the logger for the server
+		ErrorLog:     severAPILogger,        // set the severAPILogger for the server
 		ReadTimeout:  5 * time.Second,       // max time to read request from the client
 		WriteTimeout: 10 * time.Second,      // max time to write response to the client
 		IdleTimeout:  120 * time.Second,     // max time for connections using TCP Keep-Alive
@@ -60,14 +63,16 @@ func main() {
 
 	// start the server
 	go func() {
-		logger.Println("Starting server on port 9090")
+		severAPILogger.Println("Starting server on port 9090")
 
 		err := srv.ListenAndServe()
 		if err != nil {
-			logger.Printf("Error starting server: %s\n", err)
+			severAPILogger.Printf("Error starting server: %s\n", err)
 			os.Exit(1)
 		}
 	}()
+	//Make sure the db tables and model of the severs match up
+	internal.AutoMigrateDB()
 
 	// trap sigterm or interrupt and gracefully shutdown the server
 	c := make(chan os.Signal, 1)

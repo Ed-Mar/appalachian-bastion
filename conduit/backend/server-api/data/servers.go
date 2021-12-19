@@ -68,8 +68,9 @@ func UpdateServer(server Server) error {
 //TODO interface with keycloak to remove that permissions in the role listing
 func AddServer(server Server) {
 	// get the next id in sequence
-	maxID := serverList[len(serverList)-1].ID
-	server.ID = maxID + 1
+	//maxID := serverList[len(serverList)-1].ID
+	//server.ID = maxID + 1
+
 	serverList = append(serverList, &server)
 }
 
