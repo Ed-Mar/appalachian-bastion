@@ -1,12 +1,12 @@
 package handlers
 
 import (
+	"backend/internal"
 	"fmt"
 	"log"
 	"net/http"
 	"strconv"
 
-	"backend/server-api/data"
 	"github.com/gorilla/mux"
 )
 
@@ -16,11 +16,11 @@ type KeyServer struct{}
 // Servers handlers for getting and updating servers
 type Servers struct {
 	severAPILogger *log.Logger
-	validator      *data.Validation
+	validator      *internal.Validation
 }
 
 // NewServers returns a new servers handlers with the given severAPILogger
-func NewServers(severAPILogger *log.Logger, validator *data.Validation) *Servers {
+func NewServers(severAPILogger *log.Logger, validator *internal.Validation) *Servers {
 	return &Servers{severAPILogger, validator}
 }
 

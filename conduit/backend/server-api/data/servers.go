@@ -1,6 +1,8 @@
 package data
 
 import (
+	"backend/database/postgres"
+	"backend/internal"
 	"fmt"
 )
 
@@ -14,7 +16,7 @@ type Server struct {
 	//
 	// required: false
 	// min: 1
-	ID int `json:"id"` // Unique identifier for the server
+	ID int `json:"id" gorm:"primaryKey,autoIncrement"` // Unique identifier for the server
 
 	// the name for this server
 	//
@@ -27,6 +29,13 @@ type Server struct {
 	// required: false
 	// max length: 1000
 	Description string `json:"description"`
+
+	// collection of any channels inside this server
+	//
+	// required: false
+	Channels []Channels `json:"channels" gorm:"foreignKey:ID;references:ID"`
+	// This for database use not to be returned
+	internal.CustomGromModel `json:"-"`
 }
 
 // Servers defines a slice of Server
@@ -34,7 +43,11 @@ type Servers []*Server
 
 // GetServers returns all servers from the database
 func GetServers() Servers {
-	return serverList
+	db := postgres.GetPostgresDB()
+	var servers []*Server
+	db.Find(&servers)
+	return servers
+
 }
 
 // GetServerByID returns a single server which matches the id from the
@@ -46,7 +59,11 @@ func GetServerByID(id int) (*Server, error) {
 		return nil, ErrServerNotFound
 	}
 
-	return serverList[i], nil
+	db := postgres.GetPostgresDB()
+	var server *Server
+
+	db.First(&server, i)
+	return server, nil
 }
 
 // UpdateServer replaces a server in the database with the given item.
@@ -58,8 +75,11 @@ func UpdateServer(server Server) error {
 		return ErrServerNotFound
 	}
 
+	db := postgres.GetPostgresDB()
 	// update the server in the DB
-	serverList[i] = &server
+	// Update attributes with `struct`, will only update non-zero fields
+	db.Model(&server).Updates(Server{ID: server.ID, Name: server.Name, Description: server.Description})
+	// UPDATE servers SET ID=server.id, name=18, ....
 
 	return nil
 }
@@ -67,11 +87,8 @@ func UpdateServer(server Server) error {
 // AddServer adds a new server to the database
 //TODO interface with keycloak to remove that permissions in the role listing
 func AddServer(server Server) {
-	// get the next id in sequence
-	//maxID := serverList[len(serverList)-1].ID
-	//server.ID = maxID + 1
-
-	serverList = append(serverList, &server)
+	db := postgres.GetPostgresDB()
+	db.Create(&Server{ID: server.ID, Name: server.Name, Description: server.Description})
 }
 
 // DeleteServer deletes a server from the database
@@ -82,7 +99,11 @@ func DeleteServer(id int) error {
 		return ErrServerNotFound
 	}
 
-	serverList = append(serverList[:i], serverList[i+1])
+	db := postgres.GetPostgresDB()
+	var server *Server
+
+	db.Delete(&server, i)
+	// DELETE FROM servers WHERE id =i;
 
 	return nil
 }
@@ -91,7 +112,13 @@ func DeleteServer(id int) error {
 // internal
 // returns -1 when no server can be found
 func findIndexByServerID(id int) int {
-	for i, server := range serverList {
+	// Copy pasta from the Listall Severs, will leave this for now
+	// This is now dead code maybe will used for furture use if needed
+	db := postgres.GetPostgresDB()
+	var servers []*Server
+	db.Find(&servers)
+
+	for i, server := range servers {
 		if server.ID == id {
 			return i
 		}
