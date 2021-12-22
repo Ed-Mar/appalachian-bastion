@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"backend/internal"
 	"net/http"
 
 	"backend/server-api/data"
@@ -26,7 +27,7 @@ func (server *Servers) Delete(rw http.ResponseWriter, r *http.Request) {
 		server.severAPILogger.Println("[ERROR] deleting record id does not exist")
 
 		rw.WriteHeader(http.StatusNotFound)
-		data.ToJSON(&GenericError{Message: err.Error()}, rw)
+		internal.ToJSON(&GenericError{Message: err.Error()}, rw)
 		return
 	}
 
@@ -34,7 +35,7 @@ func (server *Servers) Delete(rw http.ResponseWriter, r *http.Request) {
 		server.severAPILogger.Println("[ERROR] deleting record", err)
 
 		rw.WriteHeader(http.StatusInternalServerError)
-		data.ToJSON(&GenericError{Message: err.Error()}, rw)
+		internal.ToJSON(&GenericError{Message: err.Error()}, rw)
 		return
 	}
 

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"backend/internal"
 	"backend/server-api/data"
 	"context"
 	"net/http"
@@ -13,12 +14,15 @@ func (server *Servers) MiddlewareValidateServer(next http.Handler) http.Handler 
 
 		serv := &data.Server{}
 
-		err := data.FromJSON(serv, r.Body)
+		err := internal.FromJSON(serv, r.Body)
 		if err != nil {
 			server.severAPILogger.Println("[ERROR] deserializing server", err)
 
 			rw.WriteHeader(http.StatusBadRequest)
-			data.ToJSON(&GenericError{Message: err.Error()}, rw)
+			err := internal.ToJSON(&GenericError{Message: err.Error()}, rw)
+			if err != nil {
+				return
+			}
 			return
 		}
 
@@ -29,7 +33,10 @@ func (server *Servers) MiddlewareValidateServer(next http.Handler) http.Handler 
 
 			// return the validation messages as an array
 			rw.WriteHeader(http.StatusUnprocessableEntity)
-			data.ToJSON(&ValidationError{Messages: errs.Errors()}, rw)
+			err := internal.ToJSON(&ValidationError{Messages: errs.Errors()}, rw)
+			if err != nil {
+				return
+			}
 			return
 		}
 

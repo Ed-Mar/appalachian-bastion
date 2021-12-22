@@ -1,6 +1,7 @@
 package data
 
 import (
+	"backend/internal"
 	"bytes"
 	"testing"
 
@@ -12,7 +13,7 @@ func TestServerMissingNameReturnsErr(t *testing.T) {
 		Description: "W H A T S H A P P I N G vol.8",
 	}
 
-	validator := NewValidation()
+	validator := internal.NewValidation()
 	err := validator.Validate(server)
 	assert.Len(t, err, 1)
 }
@@ -25,7 +26,7 @@ func TestValidServerDoesNOTReturnsErr(t *testing.T) {
 		Description: "PHONK 808",
 	}
 
-	validator := NewValidation()
+	validator := internal.NewValidation()
 	err := validator.Validate(server)
 	assert.Len(t, err, 1)
 }
@@ -38,6 +39,6 @@ func TestServersToJSON(t *testing.T) {
 	}
 
 	b := bytes.NewBufferString("")
-	err := ToJSON(ps, b)
+	err := internal.ToJSON(ps, b)
 	assert.NoError(t, err)
 }

@@ -1,6 +1,8 @@
 package main
 
 import (
+	"backend/internal"
+	"backend/internal/database"
 	"context"
 	"log"
 	"net/http"
@@ -8,10 +10,7 @@ import (
 	"os/signal"
 	"time"
 
-	"backend/server-api/data"
 	"backend/server-api/handlers"
-	"backend/server-api/internal"
-
 	"github.com/go-openapi/runtime/middleware"
 	gohandlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -21,7 +20,7 @@ func main() {
 	severAPILogger := log.New(os.Stdout, "server-api | ", log.LstdFlags)
 	//databaseAPILogger := log.New(os.Stdout, "postgres-db | ", log.LstdFlags)
 
-	validation := data.NewValidation()
+	validation := internal.NewValidation()
 
 	serverHandler := handlers.NewServers(severAPILogger, validation)
 
@@ -72,7 +71,7 @@ func main() {
 		}
 	}()
 	//Make sure the db tables and model of the severs match up
-	internal.AutoMigrateDB()
+	database.AutoMigrateDB()
 
 	// trap sigterm or interrupt and gracefully shutdown the server
 	c := make(chan os.Signal, 1)

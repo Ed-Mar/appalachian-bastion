@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"backend/internal"
 	"net/http"
 
 	"backend/server-api/data"
@@ -18,7 +19,7 @@ func (server *Servers) ListAll(rw http.ResponseWriter, r *http.Request) {
 
 	servs := data.GetServers()
 
-	err := data.ToJSON(servs, rw)
+	err := internal.ToJSON(servs, rw)
 	if err != nil {
 		// we should never be here but log the error just incase
 		server.severAPILogger.Println("[ERROR] serializing server", err)
@@ -48,17 +49,17 @@ func (server *Servers) ListSingle(rw http.ResponseWriter, r *http.Request) {
 		server.severAPILogger.Println("[ERROR] fetching server", err)
 
 		rw.WriteHeader(http.StatusNotFound)
-		data.ToJSON(&GenericError{Message: err.Error()}, rw)
+		internal.ToJSON(&GenericError{Message: err.Error()}, rw)
 		return
 	default:
 		server.severAPILogger.Println("[ERROR] fetching server", err)
 
 		rw.WriteHeader(http.StatusInternalServerError)
-		data.ToJSON(&GenericError{Message: err.Error()}, rw)
+		internal.ToJSON(&GenericError{Message: err.Error()}, rw)
 		return
 	}
 
-	err = data.ToJSON(serv, rw)
+	err = internal.ToJSON(serv, rw)
 	if err != nil {
 		// we should never be here but log the error just incase
 		server.severAPILogger.Println("[ERROR] serializing server", err)
