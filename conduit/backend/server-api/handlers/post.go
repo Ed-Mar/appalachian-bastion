@@ -16,8 +16,10 @@ import (
 // Create handles POST requests to add new servers
 func (server *Servers) Create(rw http.ResponseWriter, r *http.Request) {
 	// fetch the server from the context
-	srev := r.Context().Value(KeyServer{}).(data.Server)
+	rw.Header().Add("Content-Type", "application/json")
 
+	srev := r.Context().Value(KeyServer{}).(*data.Server)
 	server.severAPILogger.Printf("[DEBUG] Inserting server: %#validator\n", srev)
-	data.AddServer(srev)
+
+	data.AddServer(*srev)
 }

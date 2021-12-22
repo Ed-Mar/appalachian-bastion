@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"backend/internal"
 	"net/http"
 
 	"backend/server-api/data"
@@ -19,15 +20,15 @@ func (server *Servers) Update(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 
 	// fetch the server from the context
-	serv := r.Context().Value(KeyServer{}).(data.Server)
+	serv := r.Context().Value(KeyServer{}).(*data.Server)
 	server.severAPILogger.Println("[DEBUG] updating record id", serv.ID)
 
-	err := data.UpdateServer(serv)
+	err := data.UpdateServer(*serv)
 	if err == data.ErrServerNotFound {
 		server.severAPILogger.Println("[ERROR] server not found", err)
 
 		rw.WriteHeader(http.StatusNotFound)
-		data.ToJSON(&GenericError{Message: "Server not found in database"}, rw)
+		internal.ToJSON(&GenericError{Message: "Server not found in database"}, rw)
 		return
 	}
 
