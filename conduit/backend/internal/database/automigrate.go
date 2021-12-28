@@ -8,7 +8,7 @@ import (
 
 func AutoMigrateDB() {
 	db := postgres.GetPostgresDB()
-	err := db.AutoMigrate(&data.Server{})
+	err := db.AutoMigrate(&data.Server{}, &data.Channel{})
 	if err != nil {
 		panic(fmt.Sprintf("failed to Automigrate Table | Error: %s", err))
 	}
