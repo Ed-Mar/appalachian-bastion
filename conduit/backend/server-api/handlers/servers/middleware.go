@@ -1,4 +1,4 @@
-package handlers
+package servers
 
 import (
 	"backend/internal"
@@ -16,12 +16,12 @@ func (server *Servers) MiddlewareValidateServer(next http.Handler) http.Handler 
 
 		err := internal.FromJSON(serv, r.Body)
 		if err != nil {
-			server.severAPILogger.Println("[ERROR] deserializing server", err)
+			server.severAPILogger.Println("[ERROR] JSON deserializing server", err)
 
 			rw.WriteHeader(http.StatusBadRequest)
 			err := internal.ToJSON(&GenericError{Message: err.Error()}, rw)
 			if err != nil {
-				return
+				server.severAPILogger.Println("[ERROR] encoding JSON: ", err)
 			}
 			return
 		}
@@ -35,7 +35,7 @@ func (server *Servers) MiddlewareValidateServer(next http.Handler) http.Handler 
 			rw.WriteHeader(http.StatusUnprocessableEntity)
 			err := internal.ToJSON(&ValidationError{Messages: errs.Errors()}, rw)
 			if err != nil {
-				return
+				server.severAPILogger.Println("[ERROR] encoding JSON: ", err)
 			}
 			return
 		}

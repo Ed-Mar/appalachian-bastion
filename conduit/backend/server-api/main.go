@@ -3,6 +3,8 @@ package main
 import (
 	"backend/internal"
 	"backend/internal/database"
+	"backend/server-api/handlers/channels"
+	"backend/server-api/handlers/servers"
 	"context"
 	"log"
 	"net/http"
@@ -10,7 +12,6 @@ import (
 	"os/signal"
 	"time"
 
-	"backend/server-api/handlers"
 	"github.com/go-openapi/runtime/middleware"
 	gohandlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -18,28 +19,41 @@ import (
 
 func main() {
 	severAPILogger := log.New(os.Stdout, "server-api | ", log.LstdFlags)
+	channelAPILogger := log.New(os.Stdout, "channel-api | ", log.LstdFlags)
 	//databaseAPILogger := log.New(os.Stdout, "postgres-db | ", log.LstdFlags)
 
 	validation := internal.NewValidation()
 
-	serverHandler := handlers.NewServers(severAPILogger, validation)
+	serverHandler := servers.NewServers(severAPILogger, validation)
+	channelHandler := channels.NewChannels(channelAPILogger, validation)
 
 	serveMux := mux.NewRouter()
 
 	getRouter := serveMux.Methods(http.MethodGet).Subrouter()
 	getRouter.HandleFunc("/servers", serverHandler.ListAll)
 	getRouter.HandleFunc("/servers/{id:[0-9]+}", serverHandler.ListSingle)
+	getRouter.HandleFunc("/servers/{id:[0-9]+}/channels", channelHandler.ListAll)
+	getRouter.HandleFunc("/servers/{id:[0-9]+}/channels/{id:[0-9]+}", channelHandler.ListSingle)
 
 	putRouter := serveMux.Methods(http.MethodPut).Subrouter()
 	putRouter.HandleFunc("/servers", serverHandler.Update)
 	putRouter.Use(serverHandler.MiddlewareValidateServer)
 
+	putChannelRouter := serveMux.Methods(http.MethodPut).Subrouter()
+	putChannelRouter.HandleFunc("/servers/{id:[0-9]+}/channels", channelHandler.Update)
+	putChannelRouter.Use(channelHandler.MiddlewareValidateChannel)
+
 	postRouter := serveMux.Methods(http.MethodPost).Subrouter()
 	postRouter.HandleFunc("/servers", serverHandler.Create)
 	postRouter.Use(serverHandler.MiddlewareValidateServer)
 
+	postChannelRouter := serveMux.Methods(http.MethodPost).Subrouter()
+	postChannelRouter.HandleFunc("/servers/{id:[0-9]+}/channels", channelHandler.Create)
+	postChannelRouter.Use(channelHandler.MiddlewareValidateChannel)
+
 	deleteRouter := serveMux.Methods(http.MethodDelete).Subrouter()
 	deleteRouter.HandleFunc("/servers/{id:[0-9]+}", serverHandler.Delete)
+	deleteRouter.HandleFunc("/servers/{id:[0-9]+}/channels/{id:[0-9]+}", channelHandler.Delete)
 
 	// handler for documentation
 	opts := middleware.RedocOpts{SpecURL: "/swagger.yaml"}
@@ -84,7 +98,11 @@ func main() {
 
 	// gracefully shutdown the server, waiting max 30 seconds for current operations to complete
 	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
-	srv.Shutdown(ctx)
+	err := srv.Shutdown(ctx)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
 
 	log.Fatal(srv.ListenAndServe())
 }

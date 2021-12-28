@@ -1,16 +1,18 @@
-// Package handlers classification of Server API
+// Package servers Package handlers' classification of Server API
 //
 // Documentation for Server API
 //
 //	Schemes: http
-//	BasePath: /
+//	BasePath: /servers
 //	Version: 0.0.1
 //
 //	Consumes:
 //	- application/json
+//	Produces:
+//	- application/json
 //
 // swagger:meta
-package handlers
+package servers
 
 import "backend/server-api/data"
 
