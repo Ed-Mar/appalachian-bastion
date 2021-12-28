@@ -1,4 +1,4 @@
-package handlers
+package servers
 
 import (
 	"backend/internal"
@@ -28,7 +28,10 @@ func (server *Servers) Update(rw http.ResponseWriter, r *http.Request) {
 		server.severAPILogger.Println("[ERROR] server not found", err)
 
 		rw.WriteHeader(http.StatusNotFound)
-		internal.ToJSON(&GenericError{Message: "Server not found in database"}, rw)
+		err := internal.ToJSON(&GenericError{Message: "Server not found in database"}, rw)
+		if err != nil {
+			server.severAPILogger.Println(err)
+		}
 		return
 	}
 

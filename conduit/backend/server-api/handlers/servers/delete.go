@@ -1,4 +1,4 @@
-package handlers
+package servers
 
 import (
 	"backend/internal"
@@ -22,7 +22,7 @@ func (server *Servers) Delete(rw http.ResponseWriter, r *http.Request) {
 
 	server.severAPILogger.Println("[DEBUG] deleting record id", id)
 
-	err := data.DeleteServer(id)
+	err := data.DeleteServer(uint(id))
 	if err == data.ErrServerNotFound {
 		server.severAPILogger.Println("[ERROR] deleting record id does not exist")
 
