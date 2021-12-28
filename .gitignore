@@ -4,3 +4,5 @@
 /.vscode/
 /docs/Progress Reports/
 kubeconfig/
+
+/conduit/backend/database/postgres/docker/db-data/
