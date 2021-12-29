@@ -39,6 +39,8 @@ type Channel struct {
 	ServerID uint    `gorm:"column:server_id"`
 	Server   *Server `json:"-"`
 
+	Messages []*Message `json:"messages,omitempty" gorm:"ForeignKey:ChannelID"`
+
 	// This for database use not to be returned
 	internal.CustomGromModel `json:"-"`
 }

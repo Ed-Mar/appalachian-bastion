@@ -3,17 +3,26 @@ package data
 import (
 	"backend/database/postgres"
 	"backend/internal"
+	"backend/user-api/data"
 )
 
 type Message struct {
-	ID                 uint64 `json:"id" gorm:"primaryKey,autoIncrement"`
-	UserID             uint   `json:"userID"`
-	ChannelID          uint   `json:"channelID"`
-	Type               string `json:"type" gorm:"default:standard_text_only_message"`
+	ID uint64 `json:"id" gorm:"primaryKey,autoIncrement"`
+
+	UserID uint `json:"userID" gorm:"column:user_id"`
+	User   data.User
+
+	ChannelID uint `json:"channelID" gorm:"column:channel_id"`
+	Channel   Channel
+
+	Type string `json:"type" gorm:"default:standard_text_only_message"`
+
 	MessageReferenceID uint64 `json:"messageReferenceID,omitempty"`
 	UserReferenceID    uint   `json:"userReferenceID,omitempty"`
-	Status             string `json:"status"`
-	MessageContent     string `json:"messageContent"`
+
+	Status string `json:"status"`
+
+	MessageContent string `json:"messageContent"`
 	//Reactions			[]*Reaction
 
 	internal.CustomGromModel `json:"-"`

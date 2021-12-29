@@ -3,6 +3,7 @@ package data
 import (
 	"backend/database/postgres"
 	"backend/internal"
+	user_api "backend/user-api/data"
 	"fmt"
 )
 
@@ -33,7 +34,8 @@ type Server struct {
 	// collection of any channels inside this server
 	//
 	// required: false
-	Channels []*Channel `json:"channels,omitempty" gorm:"ForeignKey:ServerID"`
+	Channels []*Channel       `json:"channels,omitempty" gorm:"ForeignKey:ServerID"`
+	Users    []*user_api.User `json:"servers" gorm:"many2many:user_servers"`
 	//gorm:"foreignKey:ID;references:ID"`
 	// This for database use not to be returned
 	internal.CustomGromModel `json:"-"`
