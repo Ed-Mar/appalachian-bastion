@@ -31,7 +31,7 @@ type User struct {
 	// User.Type
 	// Defines the type of User this in the scope of the Conduit Application as a whole
 	// required:true
-	Type string `json:"type"`
+	Type string `json:"type" gorm:"default:standard_user_type"`
 
 	// User.Servers
 	// Define the servers that the user is in
