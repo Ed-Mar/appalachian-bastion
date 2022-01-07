@@ -14,6 +14,7 @@ const serverDBConfigPath = "server-service/config/"
 const serverDBConfigFileName = "localServerDB"
 const serverDBConfigFileType = "env"
 
+// func GetServersDBConnPool get the connection pool for the Server Service
 func GetServersDBConnPool() (*pgxpool.Pool, error) {
 	connString, err := commondb.GetDBPostgresDSN(serverDBConfigPath, serverDBConfigFileName, serverDBConfigFileType)
 	if err != nil {
