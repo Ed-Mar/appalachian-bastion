@@ -3,7 +3,7 @@ package main
 import (
 	"backend/internal"
 	"backend/internal/database"
-	"backend/server-api/handlers/servers"
+	"backend/user-api/handlers/users"
 	"context"
 	"log"
 	"net/http"
@@ -16,28 +16,28 @@ import (
 )
 
 func main() {
-	severAPILogger := log.New(os.Stdout, "server-api | ", log.LstdFlags)
+	userAPILogger := log.New(os.Stdout, "user-api | ", log.LstdFlags)
 
 	validation := internal.NewValidation()
 
-	serverHandler := servers.NewServers(severAPILogger, validation)
+	userHandler := users.NewUsers(userAPILogger, validation)
 
 	serveMux := mux.NewRouter()
 
 	getRouter := serveMux.Methods(http.MethodGet).Subrouter()
-	getRouter.HandleFunc("/servers", serverHandler.ListAll)
-	getRouter.HandleFunc("/servers/{id:[0-9]+}", serverHandler.ListSingle)
+	getRouter.HandleFunc("/users", userHandler.ListAll)
+	getRouter.HandleFunc("/users/{id:[0-9]+}", userHandler.ListSingle)
 
 	putRouter := serveMux.Methods(http.MethodPut).Subrouter()
-	putRouter.HandleFunc("/servers", serverHandler.Update)
-	putRouter.Use(serverHandler.MiddlewareValidateServer)
+	putRouter.HandleFunc("/users", userHandler.Update)
+	putRouter.Use(userHandler.MiddlewareValidateUser)
 
 	postRouter := serveMux.Methods(http.MethodPost).Subrouter()
-	postRouter.HandleFunc("/servers", serverHandler.Create)
-	postRouter.Use(serverHandler.MiddlewareValidateServer)
+	postRouter.HandleFunc("/users", userHandler.Create)
+	postRouter.Use(userHandler.MiddlewareValidateUser)
 
 	deleteRouter := serveMux.Methods(http.MethodDelete).Subrouter()
-	deleteRouter.HandleFunc("/servers/{id:[0-9]+}", serverHandler.Delete)
+	deleteRouter.HandleFunc("/users/{id:[0-9]+}", userHandler.Delete)
 
 	// handler for documentation
 	//opts := middleware.RedocOpts{SpecURL: "/swagger.yaml"}
@@ -52,26 +52,26 @@ func main() {
 	srv := &http.Server{
 		Addr:         ":9090",               // configure the bind address
 		Handler:      corsHandler(serveMux), // set the default handlers
-		ErrorLog:     severAPILogger,        // set the severAPILogger for the server
+		ErrorLog:     userAPILogger,         // set the severAPILogger for the servers
 		ReadTimeout:  5 * time.Second,       // max time to read request from the client
 		WriteTimeout: 10 * time.Second,      // max time to write response to the client
 		IdleTimeout:  120 * time.Second,     // max time for connections using TCP Keep-Alive
 	}
 
-	// start the server
+	// start the servers
 	go func() {
-		severAPILogger.Println("Starting server on port 9090")
+		userAPILogger.Println("Starting servers on port 9090")
 
 		err := srv.ListenAndServe()
 		if err != nil {
-			severAPILogger.Printf("Error starting server: %s\n", err)
+			userAPILogger.Printf("Error starting servers: %s\n", err)
 			os.Exit(1)
 		}
 	}()
 	//Make sure the db tables and model of the severs match up
 	database.AutoMigrateDB()
 
-	// trap sigterm or interrupt and gracefully shutdown the server
+	// trap sigterm or interrupt and gracefully shutdown the servers
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
 	signal.Notify(c, os.Kill)
@@ -80,7 +80,7 @@ func main() {
 	sig := <-c
 	log.Println("Got signal:", sig)
 
-	// gracefully shutdown the server, waiting max 30 seconds for current operations to complete
+	// gracefully shutdown the servers, waiting max 30 seconds for current operations to complete
 	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
 	err := srv.Shutdown(ctx)
 	if err != nil {

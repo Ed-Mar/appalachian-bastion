@@ -3,7 +3,6 @@ package data
 import (
 	"backend/database/postgres"
 	"backend/internal"
-	server "backend/server-api/data"
 )
 
 //User defines the structure for the User API
@@ -23,7 +22,7 @@ type User struct {
 	ABUserID uint `json:"-"`
 
 	// User.DefaultUserName
-	// When a user joins a Server the default username for that server can be set here
+	// When a user joins a Server the default username for that servers can be set here
 	// required: false
 	// max length: 64
 	DefaultUserName string `json:"defaultUserName" gorm:"default:default_username"`
@@ -35,7 +34,7 @@ type User struct {
 
 	// User.Servers
 	// Define the servers that the user is in
-	Servers []*server.Server `json:"servers" gorm:"many2many:user_servers"`
+	Servers []uint `json:"servers" gorm:"type:integer[]"`
 
 	internal.CustomGromModel `json:"-"`
 }
@@ -75,7 +74,7 @@ func AddUser(user User) error {
 		ABUserID:        user.ABUserID,
 		DefaultUserName: user.DefaultUserName,
 		Type:            user.Type,
-		Servers:         user.Servers,
+		//Servers:         user.Servers,
 	}).Error; err != nil {
 		return err
 	}
@@ -102,7 +101,7 @@ func UpdateUser(user User) error {
 		ABUserID:        user.ABUserID,
 		DefaultUserName: user.DefaultUserName,
 		Type:            user.Type,
-		Servers:         user.Servers,
+		//Servers:         user.Servers,
 	}).Error; err != nil {
 		return err
 	}

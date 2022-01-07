@@ -1,4 +1,4 @@
-package handlers
+package users
 
 import (
 	"backend/internal"
@@ -33,7 +33,7 @@ type ValidationError struct {
 }
 
 func getUserID(r *http.Request) int {
-	// parse the server id from the url
+	// parse the servers id from the url
 	vars := mux.Vars(r)
 	// convert the id into an integer and return
 	id, err := strconv.Atoi(vars["id"])
