@@ -3,36 +3,36 @@ consumes:
 - application/json
 definitions:
   GenericError:
-    description: GenericError is a generic error message returned by a server
+    description: GenericError is a generic error message returned by a servers
     properties:
       message:
         type: string
         x-go-name: Message
     type: object
-    x-go-package: server-api/handlers
+    x-go-package: servers-api/handlers
   Server:
-    description: Server defines the structure for an API server
+    description: Server defines the structure for an API servers
     properties:
       description:
-        description: the description for this server
+        description: the description for this servers
         maxLength: 1000
         type: string
         x-go-name: Description
       id:
-        description: the id for the server
+        description: the id for the servers
         format: int64
         minimum: 1
         type: integer
         x-go-name: ID
       name:
-        description: the name for this server
+        description: the name for this servers
         maxLength: 255
         type: string
         x-go-name: Name
     required:
     - name
     type: object
-    x-go-package: server-api/data
+    x-go-package: servers-api/data
   ValidationError:
     description: ValidationError is a collection of validation error messages
     properties:
@@ -42,7 +42,7 @@ definitions:
         type: array
         x-go-name: Messages
     type: object
-    x-go-package: server-api/handlers
+    x-go-package: servers-api/handlers
 info:
   description: Documentation for Server API
   title: classification of Server API
@@ -58,7 +58,7 @@ paths:
       tags:
       - servers
     post:
-      description: Create a new server
+      description: Create a new servers
       operationId: createServer
       parameters:
       - description: |-
@@ -104,7 +104,7 @@ paths:
       description: Update a servers details
       operationId: deleteServer
       parameters:
-      - description: The id of the server for which the operation relates
+      - description: The id of the servers for which the operation relates
         format: int64
         in: path
         name: id
@@ -124,7 +124,7 @@ paths:
       description: Return a list of servers from the database
       operationId: listSingleServer
       parameters:
-      - description: The id of the server for which the operation relates
+      - description: The id of the servers for which the operation relates
         format: int64
         in: path
         name: id

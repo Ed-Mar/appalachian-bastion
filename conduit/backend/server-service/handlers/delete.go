@@ -1,10 +1,9 @@
-package servers
+package handlers
 
 import (
 	"backend/internal"
+	"backend/server-service/model"
 	"net/http"
-
-	"backend/server-api/data"
 )
 
 // swagger:route DELETE /servers/{id} servers deleteServer
@@ -22,8 +21,8 @@ func (server *Servers) Delete(rw http.ResponseWriter, r *http.Request) {
 
 	server.severAPILogger.Println("[DEBUG] deleting record id", id)
 
-	err := data.DeleteServer(uint(id))
-	if err == data.ErrServerNotFound {
+	err := model.DeleteServer(uint(id))
+	if err == model.ErrServerNotFound {
 		server.severAPILogger.Println("[ERROR] deleting record id does not exist")
 
 		rw.WriteHeader(http.StatusNotFound)

@@ -1,4 +1,4 @@
-package servers
+package handlers
 
 import (
 	"backend/internal"
@@ -24,10 +24,10 @@ func NewServers(severAPILogger *log.Logger, validator *internal.Validation) *Ser
 	return &Servers{severAPILogger, validator}
 }
 
-// ErrInvalidServerPath is an error message when the server path is not valid
+// ErrInvalidServerPath is an error message when the servers path is not valid
 var ErrInvalidServerPath = fmt.Errorf("invalid Path, path should be /servers/[id]")
 
-// GenericError is a generic error message returned by a server
+// GenericError is a generic error message returned by a servers
 type GenericError struct {
 	Message string `json:"error-message"`
 }
@@ -37,12 +37,12 @@ type ValidationError struct {
 	Messages []string `json:"error-messages"`
 }
 
-// getServerID returns the server ID from the URL
+// getServerID returns the servers ID from the URL
 // Panics if it cannot convert the id into an integer
 // this should never happen as the router ensures that
 // this is a valid number
 func getServerID(r *http.Request) int {
-	// parse the server id from the url
+	// parse the servers id from the url
 	vars := mux.Vars(r)
 	//log.Printf("this is the output of the mux.Var(s):%v",		vars)
 

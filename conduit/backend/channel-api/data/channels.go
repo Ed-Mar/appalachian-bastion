@@ -12,7 +12,7 @@ var ErrChannelNotFound = fmt.Errorf("channel not found")
 // Channel defines the structure for an API channel
 // swagger:model
 type Channel struct {
-	// the id for the channel in relation to  server
+	// the id for the channel in relation to  servers
 	//
 	// required: true
 	// min: 1
@@ -35,11 +35,10 @@ type Channel struct {
 	// required: true
 	// default: default_channel_type
 	// max length: 64
-	Type     string  `json:"type" gorm:"default:default_channel_type"`
-	ServerID uint    `gorm:"column:server_id"`
-	Server   *Server `json:"-"`
+	Type   string `json:"type" gorm:"default:default_channel_type"`
+	Server uint   `gorm:""`
 
-	Messages []*Message `json:"messages,omitempty" gorm:"ForeignKey:ChannelID"`
+	//Messages []uint64 `json:"messages,omitempty" gorm:"ForeignKey:ChannelID"`
 
 	// This for database use not to be returned
 	internal.CustomGromModel `json:"-"`
@@ -72,9 +71,15 @@ func GetChannelByID(id uint) (*Channel, error) {
 }
 
 // AddChannel to add a given channel to the database. Takes in a Channel and the Server it's attached as params.
-func AddChannel(channel Channel, server Server) error {
+func AddChannel(channel Channel) error {
 	db := postgres.GetPostgresDB()
-	if err := db.Create(&Channel{ID: channel.ID, Name: channel.Name, Description: channel.Description, Type: channel.Type, ServerID: server.ID}).Error; err != nil {
+	if err := db.Create(&Channel{
+		ID:          channel.ID,
+		Name:        channel.Name,
+		Description: channel.Description,
+		Type:        channel.Type,
+		//	Server: channel.Server
+	}).Error; err != nil {
 		return err
 	}
 	return nil
@@ -95,7 +100,12 @@ func DeleteChannel(id uint) error {
 func UpdateChannel(channel Channel) error {
 
 	db := postgres.GetPostgresDB()
-	if err := db.Model(&channel).Updates(&Channel{ID: channel.ID, Name: channel.Name, Description: channel.Description, Type: channel.Type}).Error; err != nil {
+	if err := db.Model(&channel).Updates(&Channel{
+		ID:          channel.ID,
+		Name:        channel.Name,
+		Description: channel.Description,
+		Type:        channel.Type,
+	}).Error; err != nil {
 		return err
 	}
 	return nil

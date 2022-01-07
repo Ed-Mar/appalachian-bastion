@@ -1,8 +1,8 @@
 package channels
 
 import (
+	"backend/channel-api/data"
 	"backend/internal"
-	"backend/server-api/data"
 	"net/http"
 )
 
@@ -13,7 +13,7 @@ import (
 
 // ListAll handles GET requests and returns all current channels
 func (channel *Channels) ListAll(rw http.ResponseWriter, r *http.Request) {
-	channel.channelAPILogger.Println("[DEBUG] get all records")
+	channel.APILogger.Println("[DEBUG] get all records")
 	rw.Header().Add("Content-Type", "application/json")
 
 	servs, _ := data.GetChannels()
@@ -21,7 +21,7 @@ func (channel *Channels) ListAll(rw http.ResponseWriter, r *http.Request) {
 	err := internal.ToJSON(servs, rw)
 	if err != nil {
 		// we should never be here but log the error just incase
-		channel.channelAPILogger.Println("[ERROR] serializing channel", err)
+		channel.APILogger.Println("[ERROR] serializing channel", err)
 	}
 }
 
@@ -37,28 +37,28 @@ func (channel *Channels) ListSingle(rw http.ResponseWriter, r *http.Request) {
 
 	id := getChannelID(r)
 
-	channel.channelAPILogger.Println("[DEBUG] get record id", id)
+	channel.APILogger.Println("[DEBUG] get record id", id)
 
 	serv, err := data.GetChannelByID(uint(id))
 
 	switch err {
 	case nil:
 	case data.ErrChannelNotFound:
-		channel.channelAPILogger.Println("[ERROR] fetching channel", err)
+		channel.APILogger.Println("[ERROR] fetching channel", err)
 
 		rw.WriteHeader(http.StatusNotFound)
 		err := internal.ToJSON(&GenericError{Message: err.Error()}, rw)
 		if err != nil {
-			channel.channelAPILogger.Println("[ERROR] in JSON encoding: ", err)
+			channel.APILogger.Println("[ERROR] in JSON encoding: ", err)
 		}
 		return
 	default:
-		channel.channelAPILogger.Println("[ERROR] fetching channel", err)
+		channel.APILogger.Println("[ERROR] fetching channel", err)
 
 		rw.WriteHeader(http.StatusInternalServerError)
 		err := internal.ToJSON(&GenericError{Message: err.Error()}, rw)
 		if err != nil {
-			channel.channelAPILogger.Println("[ERROR] in JSON encoding: ", err)
+			channel.APILogger.Println("[ERROR] in JSON encoding: ", err)
 		}
 		return
 	}
@@ -66,6 +66,6 @@ func (channel *Channels) ListSingle(rw http.ResponseWriter, r *http.Request) {
 	err = internal.ToJSON(serv, rw)
 	if err != nil {
 		// we should never be here but log the error just incase
-		channel.channelAPILogger.Println("[ERROR] serializing channel", err)
+		channel.APILogger.Println("[ERROR] serializing channel", err)
 	}
 }

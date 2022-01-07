@@ -1,6 +1,7 @@
 package data
 
 import (
+	data2 "backend/channel-api/data"
 	"backend/database/postgres"
 	"backend/internal"
 	"backend/user-api/data"
@@ -13,7 +14,7 @@ type Message struct {
 	User   data.User
 
 	ChannelID uint `json:"channelID" gorm:"column:channel_id"`
-	Channel   Channel
+	Channel   data2.Channel
 
 	Type string `json:"type" gorm:"default:standard_text_only_message"`
 

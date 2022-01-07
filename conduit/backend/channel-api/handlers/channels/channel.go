@@ -13,11 +13,11 @@ type KeyChannel struct{}
 
 // Channels handlers for getting and updating Channels
 type Channels struct {
-	channelAPILogger *log.Logger
-	validator        *internal.Validation
+	APILogger *log.Logger
+	validator *internal.Validation
 }
 
-// NewChannels returns a new Channels handlers with the given channelAPILogger
+// NewChannels returns a new Channels handlers with the given APILogger
 func NewChannels(channelAPILogger *log.Logger, validator *internal.Validation) *Channels {
 	return &Channels{channelAPILogger, validator}
 }
@@ -35,7 +35,7 @@ type ValidationError struct {
 	Messages []string `json:"messages"`
 }
 
-// getChannelID returns the ID ID from the URL
+// getChannelID returns the ID from the URL
 // Panics if it cannot convert the id into an integer
 // this should never happen as the router ensures that
 // this is a valid number

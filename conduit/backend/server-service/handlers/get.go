@@ -1,10 +1,9 @@
-package servers
+package handlers
 
 import (
 	"backend/internal"
+	"backend/server-service/model"
 	"net/http"
-
-	"backend/server-api/data"
 )
 
 // swagger:route GET /servers servers listServers
@@ -17,7 +16,7 @@ func (server *Servers) ListAll(rw http.ResponseWriter, r *http.Request) {
 	server.severAPILogger.Println("[DEBUG] get all records")
 	rw.Header().Add("Content-Type", "application/json")
 
-	servs, err := data.GetServers()
+	servs, err := model.GetServers()
 	if err != nil {
 		server.severAPILogger.Println("[ERROR]: ", err)
 	}
@@ -25,7 +24,7 @@ func (server *Servers) ListAll(rw http.ResponseWriter, r *http.Request) {
 	err = internal.ToJSON(servs, rw)
 	if err != nil {
 		// we should never be here but log the error just incase
-		server.severAPILogger.Println("[ERROR] serializing server", err)
+		server.severAPILogger.Println("[ERROR] serializing servers", err)
 	}
 }
 
@@ -43,12 +42,12 @@ func (server *Servers) ListSingle(rw http.ResponseWriter, r *http.Request) {
 
 	server.severAPILogger.Println("[DEBUG] get record id", id)
 
-	serv, err := data.GetServerByID(uint(id))
+	serv, err := model.GetServerByID(uint(id))
 
 	switch err {
 	case nil:
-	case data.ErrServerNotFound:
-		server.severAPILogger.Println("[ERROR] fetching server", err)
+	case model.ErrServerNotFound:
+		server.severAPILogger.Println("[ERROR] fetching servers", err)
 
 		rw.WriteHeader(http.StatusNotFound)
 		err := internal.ToJSON(&GenericError{Message: err.Error()}, rw)
@@ -57,7 +56,7 @@ func (server *Servers) ListSingle(rw http.ResponseWriter, r *http.Request) {
 		}
 		return
 	default:
-		server.severAPILogger.Println("[ERROR] fetching server", err)
+		server.severAPILogger.Println("[ERROR] fetching servers", err)
 
 		rw.WriteHeader(http.StatusInternalServerError)
 		err := internal.ToJSON(&GenericError{Message: err.Error()}, rw)
@@ -70,6 +69,6 @@ func (server *Servers) ListSingle(rw http.ResponseWriter, r *http.Request) {
 	err = internal.ToJSON(serv, rw)
 	if err != nil {
 		// we should never be here but log the error just incase
-		server.severAPILogger.Println("[ERROR] serializing server", err)
+		server.severAPILogger.Println("[ERROR] serializing servers", err)
 	}
 }

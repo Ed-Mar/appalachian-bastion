@@ -1,8 +1,8 @@
 package channels
 
 import (
+	"backend/channel-api/data"
 	"backend/internal"
-	"backend/server-api/data"
 	"context"
 	"net/http"
 )
@@ -16,12 +16,12 @@ func (channel *Channels) MiddlewareValidateChannel(next http.Handler) http.Handl
 
 		err := internal.FromJSON(chanl, r.Body)
 		if err != nil {
-			channel.channelAPILogger.Println("[ERROR] JSON deserializing channel", err)
+			channel.APILogger.Println("[ERROR] JSON deserializing channel", err)
 
 			rw.WriteHeader(http.StatusBadRequest)
 			err := internal.ToJSON(&GenericError{Message: err.Error()}, rw)
 			if err != nil {
-				channel.channelAPILogger.Println("[ERROR] encoding JSON: ", err)
+				channel.APILogger.Println("[ERROR] encoding JSON: ", err)
 			}
 			return
 		}
@@ -29,13 +29,13 @@ func (channel *Channels) MiddlewareValidateChannel(next http.Handler) http.Handl
 		// validate the channel
 		errs := channel.validator.Validate(chanl)
 		if len(errs) != 0 {
-			channel.channelAPILogger.Println("[ERROR] validating channel", errs)
+			channel.APILogger.Println("[ERROR] validating channel", errs)
 
 			// return the validation messages as an array
 			rw.WriteHeader(http.StatusUnprocessableEntity)
 			err := internal.ToJSON(&ValidationError{Messages: errs.Errors()}, rw)
 			if err != nil {
-				channel.channelAPILogger.Println("[ERROR] encoding JSON: ", err)
+				channel.APILogger.Println("[ERROR] encoding JSON: ", err)
 			}
 			return
 		}

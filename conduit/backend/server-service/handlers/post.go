@@ -1,12 +1,12 @@
-package servers
+package handlers
 
 import (
-	"backend/server-api/data"
+	"backend/server-service/model"
 	"net/http"
 )
 
 // swagger:route POST /servers servers createServer
-// Create a new server
+// Create a new servers
 //
 // responses:
 //	200: ServerResponse
@@ -15,11 +15,14 @@ import (
 
 // Create handles POST requests to add new servers
 func (server *Servers) Create(rw http.ResponseWriter, r *http.Request) {
-	// fetch the server from the context
+	// fetch the servers from the context
 	rw.Header().Add("Content-Type", "application/json")
 
-	srev := r.Context().Value(KeyServer{}).(*data.Server)
-	server.severAPILogger.Printf("[DEBUG] Inserting server: %#validator\n", srev)
+	srev := r.Context().Value(KeyServer{}).(*model.Server)
+	server.severAPILogger.Printf("[DEBUG] Inserting servers: %#validator\n", srev)
 
-	data.AddServer(*srev)
+	err := model.AddServer(*srev)
+	if err != nil {
+		return
+	}
 }

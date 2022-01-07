@@ -1,9 +1,8 @@
-package handlers
+package users
 
 import (
 	"backend/internal"
 	"backend/user-api/data"
-
 	"net/http"
 )
 
@@ -25,7 +24,7 @@ func (user *Users) ListAll(rw http.ResponseWriter, r *http.Request) {
 	err = internal.ToJSON(laUser, rw)
 	if err != nil {
 		// we should never be here but log the error just encase
-		user.userAPILogger.Println("[ERROR] serializing server", err)
+		user.userAPILogger.Println("[ERROR] serializing servers", err)
 	}
 }
 
@@ -48,7 +47,7 @@ func (user *Users) ListSingle(rw http.ResponseWriter, r *http.Request) {
 	switch err {
 	case nil:
 	default:
-		user.userAPILogger.Println("[ERROR] fetching server", err)
+		user.userAPILogger.Println("[ERROR] fetching servers", err)
 
 		rw.WriteHeader(http.StatusInternalServerError)
 		err := internal.ToJSON(&GenericError{Message: err.Error()}, rw)
@@ -61,6 +60,6 @@ func (user *Users) ListSingle(rw http.ResponseWriter, r *http.Request) {
 	err = internal.ToJSON(serv, rw)
 	if err != nil {
 		// we should never be here but log the error just encase
-		user.userAPILogger.Println("[ERROR] serializing server", err)
+		user.userAPILogger.Println("[ERROR] serializing servers", err)
 	}
 }

@@ -12,9 +12,11 @@
 //	- application/json
 //
 // swagger:meta
-package servers
+package handlers
 
-import "backend/server-api/data"
+import (
+	"backend/server-service/model"
+)
 
 // Generic error message returned as a string
 // swagger:response errorResponse
@@ -37,15 +39,15 @@ type errorValidationWrapper struct {
 type serversResponseWrapper struct {
 	// All current servers
 	// in: body
-	Body []data.Server
+	Body []model.Server
 }
 
 // Data structure representing a single Server
 // swagger:response ServerResponse
 type serverResponseWrapper struct {
-	// Newly created server
+	// Newly created servers
 	// in: body
-	Body data.Server
+	Body model.Server
 }
 
 // No content is returned by this API endpoint
@@ -55,16 +57,16 @@ type noContentResponseWrapper struct {
 
 // swagger:parameters updateServer createServer
 type serverParamsWrapper struct {
-	// server data structure to Update or Create.
+	// servers data structure to Update or Create.
 	// Note: the id field is ignored by update and create operations
 	// in: body
 	// required: true
-	Body data.Server
+	Body model.Server
 }
 
 // swagger:parameters listSingleServer deleteServer
 type serverIDParamsWrapper struct {
-	// The id of the server for which the operation relates
+	// The id of the servers for which the operation relates
 	// in: path
 	// required: true
 	ID int `json:"id"`

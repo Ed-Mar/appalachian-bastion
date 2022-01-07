@@ -1,10 +1,9 @@
-package servers
+package handlers
 
 import (
 	"backend/internal"
+	"backend/server-service/model"
 	"net/http"
-
-	"backend/server-api/data"
 )
 
 // swagger:route PUT /servers servers updateServer
@@ -19,13 +18,13 @@ import (
 func (server *Servers) Update(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 
-	// fetch the server from the context
-	serv := r.Context().Value(KeyServer{}).(*data.Server)
+	// fetch the servers from the context
+	serv := r.Context().Value(KeyServer{}).(*model.Server)
 	server.severAPILogger.Println("[DEBUG] updating record id", serv.ID)
 
-	err := data.UpdateServer(*serv)
-	if err == data.ErrServerNotFound {
-		server.severAPILogger.Println("[ERROR] server not found", err)
+	err := model.UpdateServer(*serv)
+	if err == model.ErrServerNotFound {
+		server.severAPILogger.Println("[ERROR] servers not found", err)
 
 		rw.WriteHeader(http.StatusNotFound)
 		err := internal.ToJSON(&GenericError{Message: "Server not found in database"}, rw)

@@ -1,8 +1,8 @@
 package channels
 
 import (
+	"backend/channel-api/data"
 	"backend/internal"
-	"backend/server-api/data"
 	"net/http"
 )
 
@@ -19,27 +19,27 @@ func (channel *Channels) Delete(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	id := getChannelID(r)
 
-	channel.channelAPILogger.Println("[DEBUG] deleting record id", id)
+	channel.APILogger.Println("[DEBUG] deleting record id", id)
 
 	err := data.DeleteChannel(uint(id))
 	if err == data.ErrChannelNotFound {
-		channel.channelAPILogger.Println("[ERROR] deleting record id does not exist")
+		channel.APILogger.Println("[ERROR] deleting record id does not exist")
 
 		rw.WriteHeader(http.StatusNotFound)
 		err := internal.ToJSON(&GenericError{Message: err.Error()}, rw)
 		if err != nil {
-			channel.channelAPILogger.Println("[ERROR] encoding to JSON: ", err)
+			channel.APILogger.Println("[ERROR] encoding to JSON: ", err)
 		}
 		return
 	}
 
 	if err != nil {
-		channel.channelAPILogger.Println("[ERROR] deleting record", err)
+		channel.APILogger.Println("[ERROR] deleting record", err)
 
 		rw.WriteHeader(http.StatusInternalServerError)
 		err := internal.ToJSON(&GenericError{Message: err.Error()}, rw)
 		if err != nil {
-			channel.channelAPILogger.Println("[ERROR] encoding to JSON: ", err)
+			channel.APILogger.Println("[ERROR] encoding to JSON: ", err)
 		}
 		return
 	}
