@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"backend/internal"
-	"backend/server-service/model"
+	"backend/server-service/models"
 	"net/http"
 )
 
@@ -19,11 +19,11 @@ func (server *Servers) Update(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 
 	// fetch the servers from the context
-	serv := r.Context().Value(KeyServer{}).(*model.Server)
+	serv := r.Context().Value(KeyServer{}).(*models.Server)
 	server.severAPILogger.Println("[DEBUG] updating record id", serv.ID)
 
-	err := model.UpdateServer(*serv)
-	if err == model.ErrServerNotFound {
+	err := models.UpdateServer(*serv)
+	if err == models.ErrServerNotFound {
 		server.severAPILogger.Println("[ERROR] servers not found", err)
 
 		rw.WriteHeader(http.StatusNotFound)

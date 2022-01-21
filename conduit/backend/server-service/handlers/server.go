@@ -3,11 +3,10 @@ package handlers
 import (
 	"backend/internal"
 	"fmt"
+	"github.com/gofrs/uuid"
+	"github.com/gorilla/mux"
 	"log"
 	"net/http"
-	"strconv"
-
-	"github.com/gorilla/mux"
 )
 
 // KeyServer is a key used for the Server object in the context
@@ -38,21 +37,18 @@ type ValidationError struct {
 }
 
 // getServerID returns the servers ID from the URL
-// Panics if it cannot convert the id into an integer
-// this should never happen as the router ensures that
-// this is a valid number
-func getServerID(r *http.Request) int {
+// converts the id into a UUID
+func getServerID(r *http.Request) (uuid.UUID, error) {
 	// parse the servers id from the url
 	vars := mux.Vars(r)
-	//log.Printf("this is the output of the mux.Var(s):%v",		vars)
+	id, err := uuid.FromString(vars["id"])
 
-	// convert the id into an integer and return
-	id, err := strconv.Atoi(vars["id"])
-	//log.Println("id grab from the URI is: %v", id)
+	// this will catch the any incorrect UUID Input
 	if err != nil {
-		// should never happen
-		panic(err)
+
+		return id, err
 	}
 
-	return id
+	return id, nil
+
 }

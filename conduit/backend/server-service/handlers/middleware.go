@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"backend/internal"
-	"backend/server-service/model"
+	"backend/server-service/models"
 	"context"
 	"net/http"
 )
@@ -12,8 +12,7 @@ func (server *Servers) MiddlewareValidateServer(next http.Handler) http.Handler 
 	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
 		rw.Header().Add("Content-Type", "application/json")
 
-		serv := &model.Server{}
-
+		serv := &models.Server{}
 		err := internal.FromJSON(serv, r.Body)
 		if err != nil {
 			server.severAPILogger.Println("[ERROR] JSON deserializing servers", err)

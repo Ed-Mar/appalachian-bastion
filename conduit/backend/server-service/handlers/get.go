@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"backend/internal"
-	"backend/server-service/model"
+	"backend/server-service/models"
 	"net/http"
 )
 
@@ -16,7 +16,7 @@ func (server *Servers) ListAll(rw http.ResponseWriter, r *http.Request) {
 	server.severAPILogger.Println("[DEBUG] get all records")
 	rw.Header().Add("Content-Type", "application/json")
 
-	servs, err := model.GetServers()
+	servs, err := models.GetServers()
 	if err != nil {
 		server.severAPILogger.Println("[ERROR]: ", err)
 	}
@@ -38,15 +38,21 @@ func (server *Servers) ListAll(rw http.ResponseWriter, r *http.Request) {
 func (server *Servers) ListSingle(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 
-	id := getServerID(r)
+	id, err := getServerID(r)
+	if err != nil {
+		rw.WriteHeader(http.StatusBadRequest)
+		err := internal.ToJSON(&GenericError{Message: err.Error()}, rw)
+		if err != nil {
+			return
+		}
+		return
+	}
 
 	server.severAPILogger.Println("[DEBUG] get record id", id)
-
-	serv, err := model.GetServerByID(uint(id))
-
+	serv, err := models.GetServerByID(id)
 	switch err {
 	case nil:
-	case model.ErrServerNotFound:
+	case models.ErrServerNotFound:
 		server.severAPILogger.Println("[ERROR] fetching servers", err)
 
 		rw.WriteHeader(http.StatusNotFound)

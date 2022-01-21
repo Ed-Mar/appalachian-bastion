@@ -2,7 +2,7 @@ package channels
 
 import (
 	"backend/channel-api/data"
-	servers "backend/server-service/model"
+	servers "backend/server-service/models"
 	"github.com/gorilla/mux"
 	"net/http"
 	"strconv"

@@ -2,7 +2,6 @@ package main
 
 import (
 	"backend/internal"
-	"backend/internal/database"
 	"backend/server-service/handlers"
 	"context"
 	"log"
@@ -27,7 +26,8 @@ func main() {
 
 	getRouter := serveMux.Methods(http.MethodGet).Subrouter()
 	getRouter.HandleFunc("/servers", serverHandler.ListAll)
-	getRouter.HandleFunc("/servers/{id:[0-9]+}", serverHandler.ListSingle)
+	//TODO  \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b idk I can get the regex to for work with UUID
+	getRouter.HandleFunc("/servers/{id}", serverHandler.ListSingle)
 
 	putRouter := serveMux.Methods(http.MethodPut).Subrouter()
 	putRouter.HandleFunc("/servers", serverHandler.Update)
@@ -38,7 +38,7 @@ func main() {
 	postRouter.Use(serverHandler.MiddlewareValidateServer)
 
 	deleteRouter := serveMux.Methods(http.MethodDelete).Subrouter()
-	deleteRouter.HandleFunc("/servers/{id:[0-9]+}", serverHandler.Delete)
+	deleteRouter.HandleFunc("/servers/{id}", serverHandler.Delete)
 
 	// handler for documentation
 	opts := middleware.RedocOpts{SpecURL: "/swagger.yaml"}
@@ -51,7 +51,7 @@ func main() {
 	corsHandler := gohandlers.CORS(gohandlers.AllowedOrigins([]string{"http://localhost:3000"}))
 
 	srv := &http.Server{
-		Addr:         ":9090",               // configure the bind address
+		Addr:         ":9292",               // configure the bind address
 		Handler:      corsHandler(serveMux), // set the default handlers
 		ErrorLog:     severAPILogger,        // set the severAPILogger for the servers
 		ReadTimeout:  5 * time.Second,       // max time to read request from the client
@@ -61,7 +61,7 @@ func main() {
 
 	// start the servers
 	go func() {
-		severAPILogger.Println("Starting servers on port 9090")
+		severAPILogger.Println("Starting servers on port ", srv.Addr)
 
 		err := srv.ListenAndServe()
 		if err != nil {
@@ -69,9 +69,6 @@ func main() {
 			os.Exit(1)
 		}
 	}()
-	//Make sure the db tables and model of the severs match up
-	database.AutoMigrateDB()
-
 	// trap sigterm or interrupt and gracefully shutdown the servers
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
