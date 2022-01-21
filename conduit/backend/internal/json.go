@@ -8,7 +8,6 @@ import (
 // ToJSON serializes the given interface into a string based JSON format
 func ToJSON(i interface{}, writer io.Writer) error {
 	encoder := json.NewEncoder(writer)
-
 	return encoder.Encode(i)
 }
 
