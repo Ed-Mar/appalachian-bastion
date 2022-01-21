@@ -12,3 +12,7 @@ services:
 
     volumes:
       - ./db-data/:/var/lib/postgresql/data/
+
+
+    # TODO Need to write a readiness and helath check
+    # TODO Need to create all the service users
