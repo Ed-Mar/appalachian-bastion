@@ -10,7 +10,7 @@ import (
 var ErrChannelNotFound = fmt.Errorf("channel not found")
 
 // Channel defines the structure for an API channel
-// swagger:model
+// swagger:models
 type Channel struct {
 	// the id for the channel in relation to  servers
 	//

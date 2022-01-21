@@ -15,7 +15,7 @@
 package handlers
 
 import (
-	"backend/server-service/model"
+	"backend/server-service/models"
 )
 
 // Generic error message returned as a string
@@ -39,7 +39,7 @@ type errorValidationWrapper struct {
 type serversResponseWrapper struct {
 	// All current servers
 	// in: body
-	Body []model.Server
+	Body []models.Server
 }
 
 // Data structure representing a single Server
@@ -47,7 +47,7 @@ type serversResponseWrapper struct {
 type serverResponseWrapper struct {
 	// Newly created servers
 	// in: body
-	Body model.Server
+	Body models.Server
 }
 
 // No content is returned by this API endpoint
@@ -61,7 +61,7 @@ type serverParamsWrapper struct {
 	// Note: the id field is ignored by update and create operations
 	// in: body
 	// required: true
-	Body model.Server
+	Body models.Server
 }
 
 // swagger:parameters listSingleServer deleteServer

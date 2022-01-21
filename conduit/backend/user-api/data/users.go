@@ -6,7 +6,7 @@ import (
 )
 
 //User defines the structure for the User API
-//swagger:model
+//swagger:models
 type User struct {
 
 	//User.ID

@@ -61,7 +61,7 @@ func main() {
 			os.Exit(1)
 		}
 	}()
-	//Make sure the db tables and model of the severs match up
+	//Make sure the db tables and models of the severs match up
 	database.AutoMigrateDB()
 
 	// trap sigterm or interrupt and gracefully shutdown the servers
