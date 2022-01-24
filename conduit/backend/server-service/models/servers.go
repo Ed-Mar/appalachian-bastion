@@ -110,7 +110,11 @@ func GetServerByID(id uuid.UUID) (*Server, error) {
 		log.Printf("[WARRNING] GetServerByMatchingID is returning more than one item.")
 		return servers[0], nil
 	}
-	return servers[0], nil
+	// Checks if the server is deleted
+	if servers[0].DeletedAt == nil {
+		return servers[0], nil
+	}
+	return nil, ErrServerNotFound
 
 }
 
@@ -202,8 +206,8 @@ func removeSoftDeletedItems(servers []*Server) (Servers, error) {
 		var temp = len(servers)
 		for index := 0; index < temp; index++ {
 			// encase you need this later
-			log.Printf("Index: %d | Length: %d", index, temp)
-			log.Printf("Status: %v | Sever Delete At: %v", servers[index].Status, servers[index].DeletedAt)
+			//log.Printf("Index: %d | Length: %d", index, temp)
+			//log.Printf("Status: %v | Sever Delete At: %v", servers[index].Status, servers[index].DeletedAt)
 			if servers[index].DeletedAt != nil {
 				//checks the if the last element needs it
 				//bound check to make sure it's not the last element in the slice
@@ -223,7 +227,7 @@ func removeSoftDeletedItems(servers []*Server) (Servers, error) {
 					// so what this does if the index equals the new length it does the check again
 					// and removes the last element if needed.
 					var temp1 = len(servers)
-					log.Printf("Index: %d | Other-Length: %d", index, temp1)
+					//log.Printf("Index: %d | Other-Length: %d", index, temp1)
 
 					if index >= temp1-1 {
 						if servers[index].DeletedAt != nil {
@@ -273,7 +277,10 @@ const sqlGetServerWithMatchingID = "" +
 	" server_id," +
 	" server_name," +
 	" server_description," +
-	" status" +
+	" status," +
+	" created_at," +
+	" updated_at," +
+	" deleted_at" +
 	" FROM servers" +
 	" WHERE server_id = $1"
 
