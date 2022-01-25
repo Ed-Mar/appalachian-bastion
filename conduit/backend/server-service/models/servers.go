@@ -55,21 +55,24 @@ func GetServers() (Servers, error) {
 	}
 	var servers []*Server
 	err = pgxscan.Select(context.Background(), pool, &servers, sqlGetAllServers)
+	var pgErr *pgconn.PgError
 	if err != nil {
-		return nil, err
+		// Checks if the error is PG Error
+		if errors.As(err, &pgErr) {
+			// Break out into a switch statement
+			switch pgErr.Code {
+			case pgerrcode.CaseNotFound:
+				return nil, ErrServerNotFound
+			default:
+				log.Println(errGenericSQLERROR, pgErr)
+				return nil, pgErr
+			}
+		} else {
+			log.Panic("[ERROR]: Expected SQL Error got something else:  ", err)
+			return nil, err
+		}
 	}
-
-	servers, err = removeSoftDeletedItems(servers)
-	//Don't think this should happen, but encase it does
-	if err == errNoServersInSlice {
-		log.Println(errNoServersInSlice)
-		return nil, ErrServerNotFound
-	} else if err != nil {
-		return nil, err
-	}
-
 	return servers, nil
-
 }
 
 // GetServerByID returns a single servers which matches the id from the
@@ -201,53 +204,6 @@ func doesServerExistWithMatchingID(id uuid.UUID) (bool, error) {
 	return doesServerExist, nil
 }
 
-func removeSoftDeletedItems(servers []*Server) (Servers, error) {
-	if len(servers) > 0 {
-		var temp = len(servers)
-		for index := 0; index < temp; index++ {
-			// encase you need this later
-			//log.Printf("Index: %d | Length: %d", index, temp)
-			//log.Printf("Status: %v | Sever Delete At: %v", servers[index].Status, servers[index].DeletedAt)
-			if servers[index].DeletedAt != nil {
-				//checks the if the last element needs it
-				//bound check to make sure it's not the last element in the slice
-				if index >= len(servers) {
-					servers = servers[:len(servers)-1]
-					index++
-				} else {
-					servers[index] = servers[len(servers)-1]
-					servers[len(servers)-1] = nil
-					servers = servers[:len(servers)-1]
-					index++
-					// So this weird thing I found while making this mess
-					// if the second to last element is removed the last element is not checked
-					// due to the new size being smaller and meeting the end condition of the loop
-					// I did it this way over the append edit, due wanting to go fast
-					///-------
-					// so what this does if the index equals the new length it does the check again
-					// and removes the last element if needed.
-					var temp1 = len(servers)
-					//log.Printf("Index: %d | Other-Length: %d", index, temp1)
-
-					if index >= temp1-1 {
-						if servers[index].DeletedAt != nil {
-							servers = servers[:len(servers)-1]
-							index++
-							break // idk this wasn't working do I added the index++
-						}
-					}
-				}
-			}
-		}
-	} else {
-
-		return servers, errNoServersInSlice
-	}
-	return servers, nil
-}
-
-var errNoServersInSlice = fmt.Errorf("no item in passed slice")
-
 //sqlInsertServer used to insert a server to the servers table
 //parms: serverName ServerDescription, Status, & Creation Timestamp
 //INSERT INTO servers (server_name,server_description,status,created_at) VALUES('Pure SQL Insert','test','Fake_Status',2022-01-11 00:36:37.783025 )
@@ -261,15 +217,10 @@ const sqlInsertServer = "" +
 
 //sqlGetAllServers get all servers
 const sqlGetAllServers = `
-		SELECT
-		server_id,
-		server_name,
-		server_description,
-		status,
-		created_at,
-		updated_at,
-		deleted_at
-		FROM servers`
+		SELECT *
+		FROM servers
+		WHERE deleted_at IS NULL; 
+`
 
 //sqlGetServerWithMatchingID Get server with matching param UUID
 const sqlGetServerWithMatchingID = "" +
