@@ -1,7 +1,7 @@
 package channels
 
 import (
-	"backend/channel-api/data"
+	"backend/channel-service/models"
 	"backend/internal"
 	"net/http"
 )
@@ -17,12 +17,12 @@ import (
 // Delete handles DELETE requests and removes items from the database
 func (channel *Channels) Delete(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
-	id := getChannelID(r)
+	id, _ := getURIParmWithMatchingName(r, "serverID")
 
 	channel.APILogger.Println("[DEBUG] deleting record id", id)
 
-	err := data.DeleteChannel(uint(id))
-	if err == data.ErrChannelNotFound {
+	err := models.DeleteChannel(id)
+	if err == models.ErrChannelNotFound {
 		channel.APILogger.Println("[ERROR] deleting record id does not exist")
 
 		rw.WriteHeader(http.StatusNotFound)

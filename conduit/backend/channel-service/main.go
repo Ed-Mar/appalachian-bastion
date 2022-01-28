@@ -1,9 +1,8 @@
 package main
 
 import (
-	"backend/channel-api/handlers/channels"
+	"backend/channel-service/handlers/channels"
 	"backend/internal"
-	"backend/internal/database"
 	"context"
 	"log"
 	"net/http"
@@ -17,35 +16,42 @@ import (
 
 func main() {
 
-	APILogger := log.New(os.Stdout, "channel-api | ", log.LstdFlags)
+	ChannelServiceLogger := log.New(os.Stdout, "channel-service | ", log.LstdFlags)
 
 	validation := internal.NewValidation()
 
-	channelHandler := channels.NewChannels(APILogger, validation)
+	channelHandler := channels.NewChannels(ChannelServiceLogger, validation)
 
 	serveMux := mux.NewRouter()
 
+	//Note: I am not positive if I am going to support URL id passing for the server
+	//for the extent of time but for now I will do both cause the way I have it modeled
+	//one does not really need servers id if it passed in the channel obj itself
 	getRouter := serveMux.Methods(http.MethodGet).Subrouter()
-	getRouter.HandleFunc("/servers/{id:[0-9]+}/channels", channelHandler.ListAll)
-	getRouter.HandleFunc("/servers/{id:[0-9]+}/channels/{id:[0-9]+}", channelHandler.ListSingle)
+	getRouter.HandleFunc("/servers/{serverID}/channels", channelHandler.ListAllWithMatchingID)
+	getRouter.HandleFunc("/servers/{serverID}/channels/{channelID}", channelHandler.ListSingle)
+	getRouter.HandleFunc("/servers/channels/{channelID}", channelHandler.ListSingle)
 
 	putRouter := serveMux.Methods(http.MethodPut).Subrouter()
-	putRouter.HandleFunc("/servers/{id:[0-9]+}/channels", channelHandler.Update)
+	putRouter.HandleFunc("/servers/{serverID}/channels", channelHandler.Update)
+	putRouter.HandleFunc("/servers/{serverID}/channels/{channelID}", channelHandler.Update)
 	putRouter.Use(channelHandler.MiddlewareValidateChannel)
 
 	postRouter := serveMux.Methods(http.MethodPost).Subrouter()
-	postRouter.HandleFunc("/servers/{id:[0-9]+}/channels", channelHandler.Create)
+	postRouter.HandleFunc("/servers/{serverID}/channels", channelHandler.Create)
+	postRouter.HandleFunc("/servers/channels", channelHandler.Create)
 	postRouter.Use(channelHandler.MiddlewareValidateChannel)
 
 	deleteRouter := serveMux.Methods(http.MethodDelete).Subrouter()
-	deleteRouter.HandleFunc("/servers/{id:[0-9]+}/channels/{id:[0-9]+}", channelHandler.Delete)
+	deleteRouter.HandleFunc("/servers/{serverID}/channels/{channelID}", channelHandler.Delete)
+	deleteRouter.HandleFunc("/servers/channels{channelID}", channelHandler.Delete)
 
 	corsHandler := gohandlers.CORS(gohandlers.AllowedOrigins([]string{"http://localhost:3000"}))
 
 	srv := &http.Server{
-		Addr:         ":9090",               // configure the bind address
+		Addr:         ":9393",               // configure the bind address
 		Handler:      corsHandler(serveMux), // set the default handlers
-		ErrorLog:     severAPILogger,        // set the severAPILogger for the servers
+		ErrorLog:     ChannelServiceLogger,  // set the severChannelServiceLogger for the servers
 		ReadTimeout:  5 * time.Second,       // max time to read request from the client
 		WriteTimeout: 10 * time.Second,      // max time to write response to the client
 		IdleTimeout:  120 * time.Second,     // max time for connections using TCP Keep-Alive
@@ -53,16 +59,16 @@ func main() {
 
 	// start the servers
 	go func() {
-		severAPILogger.Println("Starting servers on port 9090")
+		ChannelServiceLogger.Println("Starting servers on port ", srv.Addr)
 
 		err := srv.ListenAndServe()
 		if err != nil {
-			severAPILogger.Printf("Error starting servers: %s\n", err)
+			ChannelServiceLogger.Printf("Error starting servers: %s\n", err)
 			os.Exit(1)
 		}
 	}()
-	//Make sure the db tables and models of the severs match up
-	database.AutoMigrateDB()
+
+	//TODO Clean this up below
 
 	// trap sigterm or interrupt and gracefully shutdown the servers
 	c := make(chan os.Signal, 1)

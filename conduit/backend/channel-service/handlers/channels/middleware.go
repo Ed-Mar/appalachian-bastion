@@ -1,7 +1,7 @@
 package channels
 
 import (
-	"backend/channel-api/data"
+	"backend/channel-service/models"
 	"backend/internal"
 	"context"
 	"net/http"
@@ -12,7 +12,7 @@ func (channel *Channels) MiddlewareValidateChannel(next http.Handler) http.Handl
 	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
 		rw.Header().Add("Content-Type", "application/json")
 
-		chanl := &data.Channel{}
+		chanl := &models.Channel{}
 
 		err := internal.FromJSON(chanl, r.Body)
 		if err != nil {

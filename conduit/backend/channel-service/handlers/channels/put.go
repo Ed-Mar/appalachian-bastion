@@ -1,7 +1,7 @@
 package channels
 
 import (
-	"backend/channel-api/data"
+	"backend/channel-service/models"
 	"backend/internal"
 	"net/http"
 )
@@ -19,11 +19,11 @@ func (channel *Channels) Update(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 
 	// fetch the channel from the context
-	serv := r.Context().Value(KeyChannel{}).(*data.Channel)
+	serv := r.Context().Value(KeyChannel{}).(*models.Channel)
 	channel.APILogger.Println("[DEBUG] updating record id", serv.ID)
 
-	err := data.UpdateChannel(*serv)
-	if err == data.ErrChannelNotFound {
+	err := models.UpdateChannel(*serv)
+	if err == models.ErrChannelNotFound {
 		channel.APILogger.Println("[ERROR] channel not found", err)
 
 		rw.WriteHeader(http.StatusNotFound)

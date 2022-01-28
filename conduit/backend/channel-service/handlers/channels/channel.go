@@ -3,10 +3,10 @@ package channels
 import (
 	"backend/internal"
 	"fmt"
+	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
-	"strconv"
 )
 
 type KeyChannel struct{}
@@ -35,21 +35,22 @@ type ValidationError struct {
 	Messages []string `json:"messages"`
 }
 
-// getChannelID returns the ID from the URL
-// Panics if it cannot convert the id into an integer
-// this should never happen as the router ensures that
-// this is a valid number
-func getChannelID(r *http.Request) int {
-	// parse the ID id from the url
+// getURIParmWithMatchingName returns the ID from the URL
+// Get the Parameter form the URI that has the matching name
+func getURIParmWithMatchingName(r *http.Request, idName string) (uuid.UUID, error) {
+	// parse the ids from the uri
 	vars := mux.Vars(r)
-	log.Printf("this is the output of the mux.Var(s):%v",
-		vars)
-	// convert the id into an integer and return
-	id, err := strconv.Atoi(vars["id"])
+	log.Println("Here is the Length of the Vars from the mux", len(mux.Vars(r)))
+	id, err := uuid.FromString(vars[idName])
+	log.Println("From Mux: ", id)
+	// this will catch the any incorrect UUID Input
 	if err != nil {
-		// should never happen
-		panic(err)
+		return id, err
 	}
 
-	return id
+	return id, nil
+}
+
+func getNumOfURIParms(r *http.Request) int {
+	return len(mux.Vars(r))
 }
