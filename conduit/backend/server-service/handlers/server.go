@@ -45,7 +45,6 @@ func getServerID(r *http.Request) (uuid.UUID, error) {
 
 	// this will catch the any incorrect UUID Input
 	if err != nil {
-
 		return id, err
 	}
 

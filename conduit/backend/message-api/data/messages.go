@@ -1,7 +1,7 @@
 package data
 
 import (
-	data2 "backend/channel-api/data"
+	data2 "backend/channel-service/models"
 	"backend/database/postgres"
 	"backend/internal"
 	"backend/user-api/data"

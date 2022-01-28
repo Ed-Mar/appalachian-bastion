@@ -32,7 +32,7 @@ definitions:
     required:
     - name
     type: object
-    x-go-package: servers-api/data
+    x-go-package: servers-api/models
   ValidationError:
     description: ValidationError is a collection of validation error messages
     properties:

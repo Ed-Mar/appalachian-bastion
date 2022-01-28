@@ -20,7 +20,7 @@ func (server *Servers) MiddlewareValidateServer(next http.Handler) http.Handler 
 			rw.WriteHeader(http.StatusBadRequest)
 			err := internal.ToJSON(&GenericError{Message: err.Error()}, rw)
 			if err != nil {
-				server.severAPILogger.Println("[ERROR] encoding JSON: ", err)
+				server.severAPILogger.Println("[ERROR] [JSON] encoding JSON: ", err)
 			}
 			return
 		}

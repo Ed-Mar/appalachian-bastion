@@ -57,7 +57,7 @@ type noContentResponseWrapper struct {
 
 // swagger:parameters updateServer createServer
 type serverParamsWrapper struct {
-	// servers data structure to Update or Create.
+	// servers models structure to Update or Create.
 	// Note: the id field is ignored by update and create operations
 	// in: body
 	// required: true

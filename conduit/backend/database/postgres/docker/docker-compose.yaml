@@ -11,7 +11,7 @@ services:
         - ../config/postgres.env
 
     volumes:
-      - ./db-data/:/var/lib/postgresql/data/
+      - ./db-models/:/var/lib/postgresql/models/
 
 
     # TODO Need to write a readiness and helath check
