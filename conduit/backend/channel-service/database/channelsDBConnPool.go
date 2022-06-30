@@ -12,7 +12,7 @@ import (
 
 //TODO Make this less complex to get to the file
 //const channelDBConfigPath = "channel/config/"
-const channelDBConfigPath = "config/"
+const channelDBConfigPath = "database/config/"
 const channelDBConfigFileName = "localChannelServiceDBConfig"
 const DBConfigFileType = "env"
 
