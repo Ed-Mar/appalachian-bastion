@@ -14,7 +14,7 @@ CREATE USER channel_service
     LOGIN;
 `
 
-// sqlCreateServerServiceDB Creates the Channel Database
+// sqlCreateServiceDB Creates the Channel Database
 // Needs to done by another user
 const sqlCreateServerServiceDB = `
 CREATE DATABASE channel_service OWNER channel_service;
