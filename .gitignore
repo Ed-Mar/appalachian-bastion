@@ -6,5 +6,8 @@
 kubeconfig/
 
 /conduit/backend/database/postgres/docker/db-data/
+<<<<<<< HEAD
 conduit/backend/internal-service/config/localDBSetupUserDBConfig.env
+=======
+>>>>>>> master
 *.env
