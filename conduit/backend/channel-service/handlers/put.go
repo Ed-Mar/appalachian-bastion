@@ -1,4 +1,4 @@
-package channels
+package handlers
 
 import (
 	"backend/channel-service/models"

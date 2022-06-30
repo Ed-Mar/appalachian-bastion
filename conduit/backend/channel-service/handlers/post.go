@@ -1,8 +1,10 @@
-package channels
+package handlers
 
 import (
 	"backend/channel-service/models"
 	"backend/internal"
+	"backend/internal/helper"
+
 	"fmt"
 	"net/http"
 )
@@ -21,10 +23,10 @@ func (channel *Channels) Create(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 
 	leChannel := r.Context().Value(KeyChannel{}).(*models.Channel)
-	switch getNumOfURIParms(r) {
+	switch helper.GetNumOfURIParms(r) {
 	case 1:
 		{
-			serverID, err := getURIParmWithMatchingName(r, "serverID")
+			serverID, err := helper.GetURIParmWithMatchingName(r, "serverID")
 			channel.APILogger.Printf("[DEBUG] this is the server id from the parm: ", serverID)
 			if serverID != leChannel.ServerID {
 				rw.WriteHeader(http.StatusBadRequest)
@@ -47,5 +49,23 @@ func (channel *Channels) Create(rw http.ResponseWriter, r *http.Request) {
 
 }
 func isServerIDPassViaURI(r *http.Request) {
+
+}
+func (channel *Channels) CreateChannelWithOUTServerURIPass(rw http.ResponseWriter, r *http.Request) {
+
+	rw.Header().Add("Content-Type", "application/json")
+	leChannel := r.Context().Value(KeyChannel{}).(*models.Channel)
+	channel.APILogger.Println("[DEBUG] Inserting Server")
+
+	//TODO remove this later
+	// Need to put PENDING status for all items going into the database until confirmed or whatever
+	if len(leChannel.Status) < 0 {
+		leChannel.Status = "FAKE STATUS - PENDING"
+	}
+	/////
+	err := models.AddChannel(*leChannel)
+	if err != nil {
+		return
+	}
 
 }
