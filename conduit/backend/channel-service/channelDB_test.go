@@ -1,12 +1,13 @@
-package database
+package main
 
 import (
+	"backend/channel-service/database"
 	"testing"
 )
 
 func TestChannelDBLogin(t *testing.T) {
 
-	pool, err := GetChannelsDBConnPool()
+	pool, err := database.GetChannelsDBConnPool()
 	defer pool.Close()
 	if err != nil {
 		t.Errorf("There was error connecting " + err.Error())
