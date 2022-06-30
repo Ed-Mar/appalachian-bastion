@@ -11,7 +11,7 @@ import (
 )
 
 //const serverDBConfigPath = "server-service/config/"
-const serverDBConfigPath = "config/"
+const serverDBConfigPath = "database/config/"
 const serverDBConfigFileName = "localServerServiceDBConfig"
 const serverDBConfigFileType = "env"
 
