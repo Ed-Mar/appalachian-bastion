@@ -2,6 +2,7 @@ package models
 
 import (
 	channelDB "backend/channel-service/database"
+	channelSQL "backend/channel-service/database/SQLQueries"
 	"context"
 	"errors"
 	"fmt"
@@ -29,7 +30,7 @@ type Channel struct {
 	// the name of the channel
 	//
 	// required: true
-	Name string `json:"name" validate:"required" db:"channel_id"`
+	Name string `json:"name" validate:"required" db:"channel_name"`
 
 	// the description of the channel
 	//
@@ -51,8 +52,38 @@ type Channel struct {
 }
 type Channels []*Channel
 
-// GetChannels  returns all channels from the database
-func GetChannels(serverID uuid.UUID) (Channels, error) {
+func GetEveryChannel() (Channels, error) {
+	pool, err := channelDB.GetChannelsDBConnPool()
+	if err != nil {
+		//If error occurs just send the simple error to the user, and pop it in the logs for us
+		log.Panic(err)
+		return nil, errDatabaseConnectionError
+	}
+	var channels []*Channel
+	err = pgxscan.Select(context.Background(), pool, &channels, channelSQL.SQLGetEveryChannel())
+	var pgErr *pgconn.PgError
+	if err != nil {
+		// Checks if the error is PG Error
+		if errors.As(err, &pgErr) {
+			// Break out into a switch statement
+			switch pgErr.Code {
+			case pgerrcode.CaseNotFound:
+				//I think this will only happen if the database is empty, but mite as well leave it in
+				return nil, ErrChannelNotFound
+			default:
+				log.Println(errGenericSQLERROR, pgErr)
+				return nil, pgErr
+			}
+		} else {
+			log.Panic("[ERROR]: Expected SQL Error got something else:  ", err)
+			return nil, err
+		}
+	}
+	return channels, nil
+}
+
+// GetAllAssociatedChannels  returns all channels from the database
+func GetAllAssociatedChannels(serverID uuid.UUID) (Channels, error) {
 	pool, err := channelDB.GetChannelsDBConnPool()
 	defer pool.Close()
 	if err != nil {
@@ -60,7 +91,7 @@ func GetChannels(serverID uuid.UUID) (Channels, error) {
 	}
 	var channels []*Channel
 	//TODO Finish this with the SQL
-	err = pgxscan.Select(context.Background(), pool, &channels, sqlGetAllChannels)
+	err = pgxscan.Select(context.Background(), pool, &channels, sqlGETChannel)
 	var pgErr *pgconn.PgError
 	if err != nil {
 		// Checks if the error is PG Error
@@ -133,11 +164,6 @@ func UpdateChannel(channel Channel) error {
 	return nil
 }
 
-const sqlGetAllChannels = `
-	
-
-`
-
 //sqlInsertChannel
 //INSERT INTO channels(
 //Example SQL:
@@ -152,4 +178,8 @@ INSERT INTO channels(
 	status,
 	created_at
 	)values ($1, $2, $3, $4, $5, $6);
+`
+
+const sqlGETChannel = `
+
 `
