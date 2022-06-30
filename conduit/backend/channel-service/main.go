@@ -1,7 +1,7 @@
 package main
 
 import (
-	"backend/channel-service/handlers/channels"
+	"backend/channel-service/handlers"
 	"backend/internal"
 	"context"
 	"log"
@@ -20,7 +20,7 @@ func main() {
 
 	validation := internal.NewValidation()
 
-	channelHandler := channels.NewChannels(ChannelServiceLogger, validation)
+	channelHandler := handlers.NewChannels(ChannelServiceLogger, validation)
 
 	serveMux := mux.NewRouter()
 
@@ -31,6 +31,7 @@ func main() {
 	getRouter.HandleFunc("/servers/{serverID}/channels", channelHandler.ListAllWithMatchingID)
 	getRouter.HandleFunc("/servers/{serverID}/channels/{channelID}", channelHandler.ListSingle)
 	getRouter.HandleFunc("/servers/channels/{channelID}", channelHandler.ListSingle)
+	getRouter.HandleFunc("/channels", channelHandler.ListEveryChannel)
 
 	putRouter := serveMux.Methods(http.MethodPut).Subrouter()
 	putRouter.HandleFunc("/servers/{serverID}/channels", channelHandler.Update)
@@ -40,6 +41,7 @@ func main() {
 	postRouter := serveMux.Methods(http.MethodPost).Subrouter()
 	postRouter.HandleFunc("/servers/{serverID}/channels", channelHandler.Create)
 	postRouter.HandleFunc("/servers/channels", channelHandler.Create)
+	postRouter.HandleFunc("/channels", channelHandler.CreateChannelWithOUTServerURIPass)
 	postRouter.Use(channelHandler.MiddlewareValidateChannel)
 
 	deleteRouter := serveMux.Methods(http.MethodDelete).Subrouter()
