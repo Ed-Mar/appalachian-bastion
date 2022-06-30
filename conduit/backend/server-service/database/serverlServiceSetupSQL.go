@@ -16,6 +16,12 @@ const sqlCreateServerServiceDB = "" +
 	"CREATE DATABASE server_service" +
 	" OWNER server_service"
 
+// Once the created I need to make sure server_service user is the owner of the database cause this will cause iusses if not
+const sqlAlterServerOwnershipToServerService = `
+	alter table servers
+    owner to server_service;
+`
+
 // sqlCheckIfUUIDExtensionsExist checks if the uuid extension is installed on current connected database
 // Needs to be run on database that the user is connected on to be work
 // SELECT EXISTS (SELECT FROM pg_extension WHERE extname = ('uuid-ossp'))
