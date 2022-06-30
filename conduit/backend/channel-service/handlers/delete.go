@@ -1,8 +1,9 @@
-package channels
+package handlers
 
 import (
 	"backend/channel-service/models"
 	"backend/internal"
+	"backend/internal/helper"
 	"net/http"
 )
 
@@ -17,7 +18,7 @@ import (
 // Delete handles DELETE requests and removes items from the database
 func (channel *Channels) Delete(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
-	id, _ := getURIParmWithMatchingName(r, "serverID")
+	id, _ := helper.GetURIParmWithMatchingName(r, "serverID")
 
 	channel.APILogger.Println("[DEBUG] deleting record id", id)
 
