@@ -1,10 +1,30 @@
-package channels
+package handlers
 
 import (
 	"backend/channel-service/models"
 	"backend/internal"
+	"backend/internal/helper"
 	"net/http"
 )
+
+//TODO Need to either Restrict this or just remove it due to No User ever be able to do this later
+
+// ListEveryChannel Returns all the channel in the database
+func (channel *Channels) ListEveryChannel(rw http.ResponseWriter, r *http.Request) {
+	channel.APILogger.Println("[DEBUG] get every dam channel")
+
+	leChannel, err := models.GetEveryChannel()
+	if err != nil {
+		channel.APILogger.Println("[ERROR]: ", err)
+	}
+
+	err = internal.ToJSON(leChannel, rw)
+	if err != nil {
+		// we should never be here but log the error just in-case
+		channel.APILogger.Println("[ERROR] serializing servers", err)
+	}
+
+}
 
 // swagger:route GET servers{id}/channels channels listchannels
 // Return a list of channels from the database
@@ -13,10 +33,10 @@ import (
 
 // ListAllWithMatchingID handles GET requests and returns all current channels
 func (channel *Channels) ListAllWithMatchingID(rw http.ResponseWriter, r *http.Request) {
-	channel.APILogger.Println("[DEBUG] get all records")
+	channel.APILogger.Println("[DEBUG] get all channels for given matching server id")
 	rw.Header().Add("Content-Type", "application/json")
 
-	serverID, err := getURIParmWithMatchingName(r, "serverID")
+	serverID, err := helper.GetURIParmWithMatchingName(r, "serverID")
 	if err != nil {
 		// Bad Server UUID passed or can't convert it for some reason
 		rw.WriteHeader(http.StatusBadRequest)
@@ -29,12 +49,12 @@ func (channel *Channels) ListAllWithMatchingID(rw http.ResponseWriter, r *http.R
 	}
 
 	channel.APILogger.Println("[DEBUG] Getting All Channels for Server ID: ", serverID)
-	channels, err := models.GetChannels(serverID)
+	channels, err := models.GetAllAssociatedChannels(serverID)
 	switch err {
 	case nil:
 	case models.ErrChannelNotFound:
 		rw.WriteHeader(http.StatusNotFound)
-		err := internal.ToJSON(&GenericError{Message: err.Error()}, rw)
+		err := internal.ToJSON(GenericError{Message: err.Error()}, rw)
 		if err != nil {
 			channel.APILogger.Println("[ERROR] in JSON encoding: ", err)
 		}
@@ -43,7 +63,7 @@ func (channel *Channels) ListAllWithMatchingID(rw http.ResponseWriter, r *http.R
 		channel.APILogger.Println("[ERROR] fetching channels", err)
 
 		rw.WriteHeader(http.StatusInternalServerError)
-		err := internal.ToJSON(&GenericError{Message: err.Error()}, rw)
+		err := internal.ToJSON(GenericError{Message: err.Error()}, rw)
 		if err != nil {
 			channel.APILogger.Println("[ERROR] in JSON encoding: ", err)
 		}
@@ -66,7 +86,7 @@ func (channel *Channels) ListAllWithMatchingID(rw http.ResponseWriter, r *http.R
 func (channel *Channels) ListSingle(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 
-	serverID, err := getURIParmWithMatchingName(r, "serverName")
+	serverID, err := helper.GetURIParmWithMatchingName(r, "serverName")
 	if err != nil {
 		// Bad Server UUID passed or can't convert it for some reason
 		rw.WriteHeader(http.StatusBadRequest)
