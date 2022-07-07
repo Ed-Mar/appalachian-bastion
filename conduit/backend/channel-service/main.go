@@ -28,14 +28,15 @@ func main() {
 	//for the extent of time but for now I will do both cause the way I have it modeled
 	//one does not really need servers id if it passed in the channel obj itself
 	getRouter := serveMux.Methods(http.MethodGet).Subrouter()
-	getRouter.HandleFunc("/servers/{serverID}/channels", channelHandler.ListAllWithMatchingID)
-	getRouter.HandleFunc("/servers/{serverID}/channels/{channelID}", channelHandler.ListSingle)
+	getRouter.HandleFunc("/servers/{serverID}/channels", channelHandler.ListAllChannelsWithMatchingServerID)
 	getRouter.HandleFunc("/servers/channels/{channelID}", channelHandler.ListSingle)
 	getRouter.HandleFunc("/channels", channelHandler.ListEveryChannel)
 
 	putRouter := serveMux.Methods(http.MethodPut).Subrouter()
-	putRouter.HandleFunc("/servers/{serverID}/channels", channelHandler.Update)
-	putRouter.HandleFunc("/servers/{serverID}/channels/{channelID}", channelHandler.Update)
+	//putRouter.HandleFunc("/servers/{serverID}/channels", channelHandler.UpdateWithoutIDParm)
+	//putRouter.HandleFunc("/servers/{serverID}/channels/{channelID}", channelHandler.UpdateWithoutIDParm)
+	//putRouter.HandleFunc("/servers/channels/{channelID}", channelHandler.UpdateWithoutIDParm)
+	putRouter.HandleFunc("/servers/channels/", channelHandler.UpdateWithoutParms)
 	putRouter.Use(channelHandler.MiddlewareValidateChannel)
 
 	postRouter := serveMux.Methods(http.MethodPost).Subrouter()
