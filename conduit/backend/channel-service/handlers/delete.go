@@ -8,7 +8,7 @@ import (
 )
 
 // swagger:route DELETE /channels/{channelID} channels deleteChannel
-// Update a channels details
+// UpdateSingleton a channels details
 //
 // responses:
 //	204: noContentResponse

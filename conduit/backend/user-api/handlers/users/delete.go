@@ -7,7 +7,7 @@ import (
 )
 
 // swagger:route DELETE /servers/{id} servers deleteServer
-// Update a servers details
+// UpdateSingleton a servers details
 //
 // responses:
 //	201: noContentResponse

@@ -7,7 +7,7 @@ import (
 )
 
 // swagger:route PUT /servers servers updateServer
-// Update a servers details
+// UpdateSingleton a servers details
 //
 // responses:
 //	201: noContentResponse

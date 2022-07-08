@@ -6,7 +6,7 @@ import (
 )
 
 // swagger:route POST /users users createUser
-// Create a new servers
+// CreateSingleton a new servers
 //
 // responses:
 //	200: ServerResponse

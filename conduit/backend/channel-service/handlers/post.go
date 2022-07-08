@@ -7,7 +7,7 @@ import (
 )
 
 // swagger:route POST /servers/{id}/channels channels createChannel
-// Create a new servers
+// CreateSingleton a new servers
 //
 // responses:
 //	200: ChannelResponse
