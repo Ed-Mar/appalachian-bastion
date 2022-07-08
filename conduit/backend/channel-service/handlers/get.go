@@ -37,7 +37,7 @@ func (channel *Channels) ListAllChannelsWithMatchingServerID(rw http.ResponseWri
 	rw.Header().Add("Content-Type", "application/json")
 
 	// Grabbing Server UUID from the URI
-	leChannel, err := helper.GetUUIDFromReqParm(r, "channelID")
+	serverID, err := helper.GetUUIDFromReqParm(r, "serverID")
 	if err != nil {
 		// Bad Server UUID passed or can't convert it for some reason
 		rw.WriteHeader(http.StatusBadRequest)
@@ -49,8 +49,8 @@ func (channel *Channels) ListAllChannelsWithMatchingServerID(rw http.ResponseWri
 		return
 	}
 
-	channel.APILogger.Println("[DEBUG] Getting All Channels for Server ID: ", leChannel)
-	channels, err := models.GetChannelsViaServerID(leChannel)
+	channel.APILogger.Println("[DEBUG] Getting All Channels for Server ID: ", serverID)
+	channels, err := models.GetChannelsViaServerID(serverID)
 	switch err {
 	case nil:
 	case models.ErrChannelNotFound:
