@@ -245,7 +245,7 @@ func DeleteChannel(channelID uuid.UUID) error {
 	}
 	const expectedUpdateReturnValue = "UPDATE 1"
 	if cmdTag.String() != expectedUpdateReturnValue {
-		log.Printf("[ERROR] [CHANNEL] [MODEL] [DELETE] Some werid happen and did not get Update 1 but instead got: %v\n", cmdTag.String())
+		log.Printf("[ERROR] [SERVER] [MODEL] [DELETE] Some werid happen and did not get UpdateSingleton 1 but instead got: %v\n", cmdTag.String())
 		return errGenericSQLERROR
 	}
 
