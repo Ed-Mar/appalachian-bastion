@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
-	"log"
 	"net/http"
 )
 
@@ -17,8 +16,8 @@ func GetUUIDFromReqParm(r *http.Request, idName string) (uuid.UUID, error) {
 	// parse the ids from the uri
 	vars := mux.Vars(r)
 
-	log.Println("Number of Variables in the Request", len(mux.Vars(r)))
-	fmt.Println(vars)
+	//log.Println("Number of Variables in the Request", len(mux.Vars(r)))
+	//fmt.Println(vars)
 
 	//Check to see if the request parm matches the one we are looking for
 	_, ok := vars[idName]
