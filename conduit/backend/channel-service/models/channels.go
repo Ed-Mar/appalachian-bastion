@@ -223,9 +223,34 @@ func UpdateChannel(channel Channel) error {
 }
 
 // DeleteChannel delete a channel with the given matching uint
-func DeleteChannel(id uuid.UUID) error {
+func DeleteChannel(channelID uuid.UUID) error {
+	recordExist, err := doesChannelExistWithMatchingID(channelID)
+	if err != nil {
+		return err
+	}
+	if !recordExist {
+		return ErrChannelNotFound
+	}
+
+	pool, err := channelDB.GetChannelsDBConnPool()
+	defer pool.Close()
+	if err != nil {
+		log.Println(errDatabaseConnectionError, err)
+		return err
+	}
+	cmdTag, err1 := pool.Exec(context.Background(), channelSQL.SQLSoftDeleteChannelMatchingID(), channelID)
+	if err1 != nil {
+		log.Println(errGenericSQLERROR, err1)
+		return err1
+	}
+	const expectedUpdateReturnValue = "UPDATE 1"
+	if cmdTag.String() != expectedUpdateReturnValue {
+		log.Printf("[ERROR] [CHANNEL] [MODEL] [DELETE] Some werid happen and did not get Update 1 but instead got: %v\n", cmdTag.String())
+		return errGenericSQLERROR
+	}
 
 	return nil
+
 }
 func doesChannelExistWithMatchingID(channelID uuid.UUID) (bool, error) {
 	pool, err := channelDB.GetChannelsDBConnPool()
