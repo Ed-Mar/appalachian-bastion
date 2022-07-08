@@ -14,11 +14,11 @@ type KeyServer struct{}
 
 // Servers handlers for getting and updating servers
 type Servers struct {
-	severAPILogger *log.Logger
-	validator      *internal.Validation
+	APILogger *log.Logger
+	validator *internal.Validation
 }
 
-// NewServers returns a new servers handlers with the given severAPILogger
+// NewServers returns a new servers handlers with the given APILogger
 func NewServers(severAPILogger *log.Logger, validator *internal.Validation) *Servers {
 	return &Servers{severAPILogger, validator}
 }

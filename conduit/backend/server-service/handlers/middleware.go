@@ -15,12 +15,12 @@ func (server *Servers) MiddlewareValidateServer(next http.Handler) http.Handler 
 		serv := &models.Server{}
 		err := internal.FromJSON(serv, r.Body)
 		if err != nil {
-			server.severAPILogger.Println("[ERROR] JSON deserializing servers", err)
+			server.APILogger.Println("[ERROR] JSON deserializing servers", err)
 
 			rw.WriteHeader(http.StatusBadRequest)
 			err := internal.ToJSON(&GenericError{Message: err.Error()}, rw)
 			if err != nil {
-				server.severAPILogger.Println("[ERROR] [JSON] encoding JSON: ", err)
+				server.APILogger.Println("[ERROR] [JSON] encoding JSON: ", err)
 			}
 			return
 		}
@@ -28,13 +28,13 @@ func (server *Servers) MiddlewareValidateServer(next http.Handler) http.Handler 
 		// validate the servers
 		errs := server.validator.Validate(serv)
 		if len(errs) != 0 {
-			server.severAPILogger.Println("[ERROR] validating servers", errs)
+			server.APILogger.Println("[ERROR] validating servers", errs)
 
 			// return the validation messages as an array
 			rw.WriteHeader(http.StatusUnprocessableEntity)
 			err := internal.ToJSON(&ValidationError{Messages: errs.Errors()}, rw)
 			if err != nil {
-				server.severAPILogger.Println("[ERROR] encoding JSON: ", err)
+				server.APILogger.Println("[ERROR] encoding JSON: ", err)
 			}
 			return
 		}
