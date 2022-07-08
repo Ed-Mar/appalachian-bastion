@@ -53,6 +53,11 @@ func (channel *Channels) ListAllChannelsWithMatchingServerID(rw http.ResponseWri
 	channels, err := models.GetChannelsViaServerID(serverID)
 	switch err {
 	case nil:
+		err = internal.ToJSON(channels, rw)
+		if err != nil {
+			// we should never be here but log the error just encase
+			channel.APILogger.Println("[ERROR] serializing channel(s)", err)
+		}
 	case models.ErrChannelNotFound:
 		rw.WriteHeader(http.StatusNotFound)
 		err := internal.ToJSON(GenericError{Message: err.Error()}, rw)
@@ -71,11 +76,6 @@ func (channel *Channels) ListAllChannelsWithMatchingServerID(rw http.ResponseWri
 		return
 	}
 
-	err = internal.ToJSON(channels, rw)
-	if err != nil {
-		// we should never be here but log the error just encase
-		channel.APILogger.Println("[ERROR] serializing channel(s)", err)
-	}
 }
 
 // Return a list of channels from the database
