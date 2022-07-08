@@ -81,6 +81,10 @@ func GetEveryChannel() (Channels, error) {
 			return nil, err
 		}
 	}
+	//TODO noticed the error we use to get from database is not longer there mite have some to do with trying it with an array idk look into it later
+	if len(channels) < 1 {
+		return nil, ErrChannelNotFound
+	}
 	return channels, nil
 }
 
@@ -110,6 +114,10 @@ func GetChannelsViaServerID(serverID uuid.UUID) (Channels, error) {
 			return nil, err
 		}
 	}
+	//TODO noticed the error we use to get from database is not longer there mite have some to do with trying it with an array idk look into it later
+	if len(channels) < 1 {
+		return nil, ErrChannelNotFound
+	}
 	return channels, nil
 }
 
@@ -126,6 +134,7 @@ func GetChannelViaChannelID(channelID uuid.UUID) (Channels, error) {
 	err = pgxscan.Select(context.Background(), pool, &channels, channelSQL.SQLGetChannelViaID(), channelID)
 	var pgErr *pgconn.PgError
 	if err != nil {
+		log.Println(err)
 		// Checks if the error is PG Error
 		if errors.As(err, &pgErr) {
 			// Break out into a switch statement
@@ -141,6 +150,11 @@ func GetChannelViaChannelID(channelID uuid.UUID) (Channels, error) {
 			return nil, err
 		}
 	}
+	//TODO noticed the error we use to get from database is not longer there mite have some to do with trying it with an array idk look into it later
+	if len(channels) < 1 {
+		return nil, ErrChannelNotFound
+	}
+
 	return channels, nil
 
 }
