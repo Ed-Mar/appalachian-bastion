@@ -37,7 +37,7 @@ func (channel *Channels) ListAllChannelsWithMatchingServerID(rw http.ResponseWri
 	rw.Header().Add("Content-Type", "application/json")
 
 	// Grabbing Server UUID from the URI
-	serverID, err := helper.GetURIParmWithMatchingName(r, "serverID")
+	serverID, err := helper.GetUUIDFromReqParm(r, "serverID")
 	if err != nil {
 		// Bad Server UUID passed or can't convert it for some reason
 		rw.WriteHeader(http.StatusBadRequest)
@@ -87,14 +87,22 @@ func (channel *Channels) ListAllChannelsWithMatchingServerID(rw http.ResponseWri
 func (channel *Channels) ListSingle(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 
-	serverID, err := helper.GetURIParmWithMatchingName(r, "serverName")
-	if err != nil {
-		// Bad Server UUID passed or can't convert it for some reason
+	serverID, err := helper.GetUUIDFromReqParm(r, "channelID")
+	switch err {
+	case nil: //Not Error
+	case helper.ErrIncorrectUUIDFormat: // Format Error with UUID passed
 		rw.WriteHeader(http.StatusBadRequest)
 		err := internal.ToJSON(&GenericError{Message: err.Error()}, rw)
 		if err != nil {
 			// if encode to JSON fails just logged from the JSON side
 			return
+		}
+		return
+	default: // Catch all error
+		rw.WriteHeader(http.StatusInternalServerError)
+		err := internal.ToJSON(&GenericError{Message: err.Error()}, rw)
+		if err != nil {
+			channel.APILogger.Println("[ERROR] in JSON encoding: ", err)
 		}
 		return
 	}

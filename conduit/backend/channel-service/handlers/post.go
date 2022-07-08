@@ -26,7 +26,7 @@ func (channel *Channels) Create(rw http.ResponseWriter, r *http.Request) {
 	switch helper.GetNumOfURIParms(r) {
 	case 1:
 		{
-			serverID, err := helper.GetURIParmWithMatchingName(r, "serverID")
+			serverID, err := helper.GetUUIDFromReqParm(r, "serverID")
 			channel.APILogger.Printf("[DEBUG] this is the server id from the parm: ", serverID)
 			if serverID != leChannel.ServerID {
 				rw.WriteHeader(http.StatusBadRequest)

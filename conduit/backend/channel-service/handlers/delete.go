@@ -18,7 +18,7 @@ import (
 // Delete handles DELETE requests and removes items from the database
 func (channel *Channels) Delete(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
-	id, _ := helper.GetURIParmWithMatchingName(r, "serverID")
+	id, _ := helper.GetUUIDFromReqParm(r, "serverID")
 
 	channel.APILogger.Println("[DEBUG] deleting record id", id)
 
