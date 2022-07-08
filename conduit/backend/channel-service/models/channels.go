@@ -173,7 +173,7 @@ func AddChannel(channel Channel) error {
 	//	server_id = $4
 	//	status = $5
 	//	created_at = $6
-	_, err = pool.Exec(context.Background(), sqlInsertChannel, channel.Name, channel.Description, channel.Type, channel.ServerID, channel.Status, time.Now())
+	_, err = pool.Exec(context.Background(), channelSQL.SQLInsertChannel(), channel.Name, channel.Description, channel.Type, channel.ServerID, channel.Status, time.Now())
 	var pgErr *pgconn.PgError
 	if err != nil {
 		// Checks if the error is Postgres Error
@@ -269,23 +269,3 @@ func doesChannelExistWithMatchingID(channelID uuid.UUID) (bool, error) {
 	return doesChannelExist, nil
 
 }
-
-//sqlInsertChannel
-//INSERT INTO channels(
-//Example SQL:
-//  channel_name, channel_description,channel_type ,server_id, status, created_at
-//  )values ('PRUE SQL INSERT #2','INSERT VIA QUERY','TESTING_WITH_THA_BESTING','c7390d43-2cdd-42ba-a7c6-97a1aa847160','PRUE_SQL_INSERT',now());
-const sqlInsertChannel = `
-INSERT INTO channels(
-	channel_name,
-	channel_description,
-	channel_type,
-	server_id,
-	status,
-	created_at
-	)values ($1, $2, $3, $4, $5, $6);
-`
-
-const sqlGETChannel = `
-
-`
