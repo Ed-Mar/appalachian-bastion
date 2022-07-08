@@ -16,7 +16,7 @@ import (
 )
 
 func main() {
-	severAPILogger := log.New(os.Stdout, "servers-api | ", log.LstdFlags)
+	severAPILogger := log.New(os.Stdout, "server-service | ", log.LstdFlags)
 
 	validation := internal.NewValidation()
 
@@ -25,20 +25,19 @@ func main() {
 	serveMux := mux.NewRouter()
 
 	getRouter := serveMux.Methods(http.MethodGet).Subrouter()
-	getRouter.HandleFunc("/servers", serverHandler.ListAll)
-	//TODO  \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b idk I can get the regex to for work with UUID
-	getRouter.HandleFunc("/servers/{id}", serverHandler.ListSingle)
+	getRouter.HandleFunc("/servers", serverHandler.ListCollection)
+	getRouter.HandleFunc("/servers/{serverID}", serverHandler.ListSingleton)
 
 	putRouter := serveMux.Methods(http.MethodPut).Subrouter()
-	putRouter.HandleFunc("/servers", serverHandler.Update)
+	putRouter.HandleFunc("/server", serverHandler.UpdateSingleton)
 	putRouter.Use(serverHandler.MiddlewareValidateServer)
 
 	postRouter := serveMux.Methods(http.MethodPost).Subrouter()
-	postRouter.HandleFunc("/servers", serverHandler.Create)
+	postRouter.HandleFunc("/server", serverHandler.CreateSingleton)
 	postRouter.Use(serverHandler.MiddlewareValidateServer)
 
 	deleteRouter := serveMux.Methods(http.MethodDelete).Subrouter()
-	deleteRouter.HandleFunc("/servers/{id}", serverHandler.Delete)
+	deleteRouter.HandleFunc("/servers/{serverID}", serverHandler.DeleteSingleton)
 
 	// handler for documentation
 	opts := middleware.RedocOpts{SpecURL: "/swagger.yaml"}
