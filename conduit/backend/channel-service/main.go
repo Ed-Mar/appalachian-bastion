@@ -30,7 +30,7 @@ func main() {
 	getRouter := serveMux.Methods(http.MethodGet).Subrouter()
 	getRouter.HandleFunc("/servers/{serverID}/channels", channelHandler.ListAllChannelsWithMatchingServerID)
 	getRouter.HandleFunc("/servers/channel/{channelID}", channelHandler.ListSingle)
-	getRouter.HandleFunc("/channels", channelHandler.ListEveryChannel)
+	getRouter.HandleFunc("/servers/channels", channelHandler.ListEveryChannel)
 
 	putRouter := serveMux.Methods(http.MethodPut).Subrouter()
 	putRouter.HandleFunc("/servers/channel/", channelHandler.UpdateWithoutParms)
