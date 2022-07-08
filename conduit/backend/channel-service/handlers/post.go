@@ -51,7 +51,7 @@ func (channel *Channels) Create(rw http.ResponseWriter, r *http.Request) {
 func isServerIDPassViaURI(r *http.Request) {
 
 }
-func (channel *Channels) CreateChannelWithOUTServerURIPass(rw http.ResponseWriter, r *http.Request) {
+func (channel *Channels) CreateChannelWithoutParms(rw http.ResponseWriter, r *http.Request) {
 
 	rw.Header().Add("Content-Type", "application/json")
 	leChannel := r.Context().Value(KeyChannel{}).(*models.Channel)

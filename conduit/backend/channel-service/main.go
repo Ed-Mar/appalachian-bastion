@@ -29,26 +29,19 @@ func main() {
 	//one does not really need servers id if it passed in the channel obj itself
 	getRouter := serveMux.Methods(http.MethodGet).Subrouter()
 	getRouter.HandleFunc("/servers/{serverID}/channels", channelHandler.ListAllChannelsWithMatchingServerID)
-	getRouter.HandleFunc("/servers/channels/{channelID}", channelHandler.ListSingle)
+	getRouter.HandleFunc("/servers/channel/{channelID}", channelHandler.ListSingle)
 	getRouter.HandleFunc("/channels", channelHandler.ListEveryChannel)
 
 	putRouter := serveMux.Methods(http.MethodPut).Subrouter()
-	//putRouter.HandleFunc("/servers/{serverID}/channels", channelHandler.UpdateWithoutIDParm)
-	//putRouter.HandleFunc("/servers/{serverID}/channels/{channelID}", channelHandler.UpdateWithoutIDParm)
-	//putRouter.HandleFunc("/servers/channels/{channelID}", channelHandler.UpdateWithoutIDParm)
-	putRouter.HandleFunc("/servers/channels/", channelHandler.UpdateWithoutParms)
+	putRouter.HandleFunc("/servers/channel/", channelHandler.UpdateWithoutParms)
 	putRouter.Use(channelHandler.MiddlewareValidateChannel)
 
 	postRouter := serveMux.Methods(http.MethodPost).Subrouter()
-	postRouter.HandleFunc("/servers/{serverID}/channels", channelHandler.Create)
-	postRouter.HandleFunc("/servers/channels", channelHandler.Create)
-	postRouter.HandleFunc("/channels", channelHandler.CreateChannelWithOUTServerURIPass)
+	postRouter.HandleFunc("/servers/channel", channelHandler.CreateChannelWithoutParms)
 	postRouter.Use(channelHandler.MiddlewareValidateChannel)
 
 	deleteRouter := serveMux.Methods(http.MethodDelete).Subrouter()
-	deleteRouter.HandleFunc("/servers/{serverID}/channels/{channelID}", channelHandler.Delete)
-	deleteRouter.HandleFunc("/servers/channels{channelID}", channelHandler.Delete)
-
+	deleteRouter.HandleFunc("/servers/channel", channelHandler.Delete)
 	corsHandler := gohandlers.CORS(gohandlers.AllowedOrigins([]string{"http://localhost:3000"}))
 
 	srv := &http.Server{

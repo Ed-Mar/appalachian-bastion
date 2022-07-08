@@ -14,7 +14,7 @@ import (
 //  404: errorResponse
 //  422: errorValidation
 
-// UpdateWithoutIDParm handles PUT requests to update channels
+// UpdateWithoutParms handles PUT requests to update channels
 func (channel *Channels) UpdateWithoutParms(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 
@@ -24,7 +24,7 @@ func (channel *Channels) UpdateWithoutParms(rw http.ResponseWriter, r *http.Requ
 	// Sending the Channel info to try and be updated
 	err := models.UpdateChannel(*leChannel)
 	switch err {
-	// It is updated has happened and all gone as epected
+	// It is updated has happened and all gone as expected
 	case nil:
 		rw.WriteHeader(http.StatusOK)
 		return
