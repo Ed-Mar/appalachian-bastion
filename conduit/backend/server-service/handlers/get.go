@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"backend/internal"
+	"backend/internal/helper"
 	"backend/server-service/models"
 	"net/http"
 )
@@ -53,7 +54,7 @@ func (server *Servers) ListCollection(rw http.ResponseWriter, r *http.Request) {
 func (server *Servers) ListSingleton(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 
-	id, err := getServerID(r)
+	serverID, err := helper.GetUUIDFromReqParm(r, "serverID")
 	if err != nil {
 		rw.WriteHeader(http.StatusBadRequest)
 		err := internal.ToJSON(&GenericError{Message: err.Error()}, rw)
@@ -63,8 +64,8 @@ func (server *Servers) ListSingleton(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	server.APILogger.Println("[DEBUG] get record id", id)
-	serv, err := models.GetServerByID(id)
+	server.APILogger.Println("[DEBUG] get record id", serverID)
+	serv, err := models.GetServerByID(serverID)
 	switch err {
 	case nil:
 		err = internal.ToJSON(serv, rw)
