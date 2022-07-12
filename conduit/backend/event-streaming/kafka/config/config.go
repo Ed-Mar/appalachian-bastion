@@ -10,7 +10,8 @@ import (
 )
 
 // Note that this is relevant to the where this is being run
-const kakfaConfigPath = ""
+const kakfaConfigPath = "."
+const kakfaAbsConfigPath = "/home/kaiser/workspace/tech/appalachian-bastion/conduit/backend/event-streaming/kafka/config/"
 const kakfaConfigFilename = "kafkaConfig"
 const kakfaconfigFileType = "env"
 
@@ -25,6 +26,7 @@ type kafkaConnectionConfig struct {
 
 func LoadKafkaConnectionConfig() (config kafkaConnectionConfig, err error) {
 	viper.AddConfigPath(kakfaConfigPath)
+	viper.AddConfigPath(kakfaAbsConfigPath)
 	viper.SetConfigName(kakfaConfigFilename)
 	viper.SetConfigType(kakfaconfigFileType)
 
