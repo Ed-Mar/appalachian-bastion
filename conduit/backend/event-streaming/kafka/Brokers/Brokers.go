@@ -3,6 +3,7 @@ package Brokers
 import (
 	"backend/event-streaming/kafka/config"
 	"github.com/segmentio/kafka-go"
+	"log"
 	"strconv"
 )
 
@@ -21,7 +22,17 @@ func GetBroker() (broker kafka.Broker, err error) {
 		return broker, err1
 	}
 	broker.Port = temp
-	// I do not know what ID nor Racket mean in the
+	// I do not know what ID nor Racket means really I think I know, but the
+	// documentation just leaves think the easy answer
 
 	return broker, nil
+}
+func GetBrokerString() (hostport string) {
+	kafkaConn, err := config.LoadKafkaConnectionConfig()
+	if err != nil {
+		log.Println(err)
+		return ""
+	}
+	return kafkaConn.HostAndPort
+
 }
