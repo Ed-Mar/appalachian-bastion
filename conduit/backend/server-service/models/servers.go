@@ -108,16 +108,12 @@ func GetServerByID(id uuid.UUID) (*Server, error) {
 			return nil, err
 		}
 	}
-	// I don't think this should ever happen, but a record of it would be nice it does happen
+
 	if len(servers) > 1 {
-		log.Printf("[WARRNING] GetServerByMatchingID is returning more than one item.")
 		return servers[0], nil
+	} else {
+		return nil, ErrServerNotFound
 	}
-	// Checks if the server is deleted
-	if servers[0].DeletedAt == nil {
-		return servers[0], nil
-	}
-	return nil, ErrServerNotFound
 
 }
 
@@ -233,7 +229,8 @@ const sqlGetServerWithMatchingID = "" +
 	" updated_at," +
 	" deleted_at" +
 	" FROM servers" +
-	" WHERE server_id = $1"
+	" WHERE deleted_at IS NULL AND server_id = $1" +
+	" LIMIT 1"
 
 //sqlDoesServerExistWithMatchingID returns a bool if matching server id is in servers table
 //SELECT EXISTS(SELECT FROM servers WHERE server_id::text ='2b698f82-ffef-4faa-aa70-c9bb79073ce9' );
