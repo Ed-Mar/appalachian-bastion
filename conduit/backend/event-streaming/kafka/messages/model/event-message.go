@@ -2,6 +2,7 @@ package model
 
 import (
 	"github.com/gofrs/uuid"
+	"time"
 )
 
 // EventMessage a general message structure for kafka messages
@@ -25,7 +26,9 @@ type EventMessage struct {
 	// Which Service Operation is message intended for
 	ServiceTargetOperation string `json:"ServiceTargetOperation"`
 	//Putting the time of the creation of this message in the obj so that  I get better understanding the delay
-	MessageCreationTime uuid.Timestamp `json:"MessageCreationTime"`
+	MessageCreationTime time.Time `json:"MessageCreationTime"`
+	//Is a Response Message Expected
+	ReturnMessageExpected bool `json:"ReturnMessageExpected"`
 	// For Response Messages to Understand if the request operation was completed. Think I might go with the http codes 200,201,204
 	// and error
 	ResponseCode string `json:"ResponseCode"`
