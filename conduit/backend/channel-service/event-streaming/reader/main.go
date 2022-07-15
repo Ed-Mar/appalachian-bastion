@@ -1,7 +1,7 @@
 package main
 
 import (
-	consumerGroups "backend/event-streaming/kafka/consumer-groups"
+	consumerGroups "backend/channel-service/event-streaming/reader/consumer-group"
 	"context"
 	"fmt"
 	"log"
@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	reader := consumerGroups.ServiceEventBus
+	reader := consumerGroups.ChannelServiceConsumerGroup
 	for {
 		m, err := reader.ReadMessage(context.Background())
 		if err != nil {
