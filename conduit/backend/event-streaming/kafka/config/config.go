@@ -58,3 +58,11 @@ func GetKafkaConnection(context context.Context, topic string, partition int) (c
 	}
 	return conn, nil
 }
+func GetKafkaHostAndPort() (string, error) {
+	kafkaConfig, err := LoadKafkaConnectionConfig()
+	if err != nil {
+		return "", err
+	} else {
+		return kafkaConfig.HostAndPort, nil
+	}
+}
