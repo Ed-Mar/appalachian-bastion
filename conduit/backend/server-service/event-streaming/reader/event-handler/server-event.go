@@ -5,9 +5,9 @@ import "log"
 type KeySeverEvent struct{}
 
 type ServerEvents struct {
-	EventLogger *log.Logger
+	Logger *log.Logger
 }
 
 func NewServerEvent(serverEventLogger *log.Logger) *ServerEvents {
-	return &ServerEvents{EventLogger: serverEventLogger}
+	return &ServerEvents{Logger: serverEventLogger}
 }
