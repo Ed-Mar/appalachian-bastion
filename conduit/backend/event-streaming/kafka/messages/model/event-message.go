@@ -35,3 +35,4 @@ type EventMessage struct {
 	// Map to send necessary values between services and or error information to be handled by the Reader.
 	SagaTransactionData map[string]string `json:"SagaTransactionData"`
 }
+type EventMessages []*EventMessage
