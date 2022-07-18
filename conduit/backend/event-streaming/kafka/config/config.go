@@ -11,6 +11,8 @@ import (
 
 // Note that this is relevant to the where this is being run
 const kakfaConfigPath = "."
+
+//Note the abs path is so that can be run outside this dir
 const kakfaAbsConfigPath = "/home/kaiser/workspace/tech/appalachian-bastion/conduit/backend/event-streaming/kafka/config/"
 const kakfaConfigFilename = "kafkaConfig"
 const kakfaconfigFileType = "env"
@@ -43,7 +45,6 @@ func LoadKafkaConnectionConfig() (config kafkaConnectionConfig, err error) {
 	fmt.Printf("%+v\n", config)
 
 	return
-
 }
 
 // GetKafkaConnection A wrapper on a wrapper with the loaded connection information for kafka from local file.
