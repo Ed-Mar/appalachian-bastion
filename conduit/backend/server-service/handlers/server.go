@@ -3,10 +3,7 @@ package handlers
 import (
 	"backend/internal"
 	"fmt"
-	"github.com/gofrs/uuid"
-	"github.com/gorilla/mux"
 	"log"
-	"net/http"
 )
 
 // KeyServer is a key used for the Server object in the context
@@ -34,20 +31,4 @@ type GenericError struct {
 // ValidationError is a collection of validation error messages
 type ValidationError struct {
 	Messages []string `json:"error-messages"`
-}
-
-// getServerID returns the servers ID from the URL
-// converts the id into a UUID
-func getServerID(r *http.Request) (uuid.UUID, error) {
-	// parse the servers id from the url
-	vars := mux.Vars(r)
-	id, err := uuid.FromString(vars["id"])
-
-	// this will catch the any incorrect UUID Input
-	if err != nil {
-		return id, err
-	}
-
-	return id, nil
-
 }
