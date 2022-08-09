@@ -2,7 +2,8 @@ package handlers
 
 import (
 	"backend/channel-service/models"
-	"fmt"
+	"backend/channel-service/saga"
+	saga_pattern "backend/internal/saga-pattern"
 	"net/http"
 )
 
@@ -19,14 +20,16 @@ func (channel *Channels) CreateChannelWithoutParms(rw http.ResponseWriter, r *ht
 	rw.Header().Add("Content-Type", "application/json")
 
 	leChannel := r.Context().Value(KeyChannel{}).(*models.Channel)
-	channel.APILogger.Println("[DEBUG] Inserting Server")
-	fmt.Println(leChannel.Status)
-	if leChannel.Status == "" {
-		leChannel.Status = "PENDING"
-	}
-	err := models.AddChannel(*leChannel)
-	if err != nil {
-		return
-	}
+	channel.APILogger.Println("[DEBUG] Inserting Channel")
 
+	createChannelSaga, err := saga.CreateChannelSaga(*leChannel)
+	if err != nil {
+		channel.APILogger.Printf("SAGA was setup Incorrect", err)
+		rw.WriteHeader(http.StatusInternalServerError)
+	}
+	err = saga_pattern.ExecuteSaga(*createChannelSaga)
+	if err != nil {
+		channel.APILogger.Printf("[ERROR]: ", err)
+		rw.WriteHeader(http.StatusInternalServerError)
+	}
 }
