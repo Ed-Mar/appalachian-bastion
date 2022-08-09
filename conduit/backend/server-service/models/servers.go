@@ -91,6 +91,7 @@ func GetServerByID(id uuid.UUID) (*Server, error) {
 	var servers []*Server
 	err = pgxscan.Select(context.Background(), pool, &servers, sqlGetServerWithMatchingID, id)
 
+	//TODO work out if this PgError Block is working, I do not think it is working. I knew it did one time
 	var pgErr *pgconn.PgError
 	if err != nil {
 		// Checks if the error is PG Error
@@ -108,12 +109,10 @@ func GetServerByID(id uuid.UUID) (*Server, error) {
 			return nil, err
 		}
 	}
-
-	if len(servers) > 1 {
-		return servers[0], nil
-	} else {
+	if len(servers) < 1 {
 		return nil, ErrServerNotFound
 	}
+	return servers[0], nil
 
 }
 
@@ -219,18 +218,13 @@ const sqlGetAllServers = `
 `
 
 //sqlGetServerWithMatchingID Get server with matching param UUID
-const sqlGetServerWithMatchingID = "" +
-	"SELECT" +
-	" server_id," +
-	" server_name," +
-	" server_description," +
-	" status," +
-	" created_at," +
-	" updated_at," +
-	" deleted_at" +
-	" FROM servers" +
-	" WHERE deleted_at IS NULL AND server_id = $1" +
-	" LIMIT 1"
+const sqlGetServerWithMatchingID = `
+	SELECT *
+	FROM servers
+	WHERE
+	deleted_at IS NULL AND server_id::text = $1
+	LIMIT 1;
+`
 
 //sqlDoesServerExistWithMatchingID returns a bool if matching server id is in servers table
 //SELECT EXISTS(SELECT FROM servers WHERE server_id::text ='2b698f82-ffef-4faa-aa70-c9bb79073ce9' );
