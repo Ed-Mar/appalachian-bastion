@@ -1,4 +1,4 @@
-package saga
+package holdthis
 
 import (
 	"fmt"
@@ -9,26 +9,26 @@ import (
 
 type Saga struct {
 	SageName     string
-	Transactions []*transaction
+	Transactions []*Transaction
 }
 
-type transaction struct {
+type Transaction struct {
 	TransactionName string
 	ServiceName     string
 	TransactionAction
 }
 
-func (t *transaction) GetTransaction() *transaction {
+func (t *Transaction) GetTransaction() *Transaction {
 	return t
 }
 
 //TODO find a better name for this. "TransactionAction"
 // I have no idea wtf to call this. I have spent four+ hours looking for what to call this.
-// It's the action part of the transaction. I am floored on what to call this.
+// It's the action part of the Transaction. I am floored on what to call this.
 // If anyone ever read this please let me.
-// Cause a transaction has data and it's a function at the same time, technically its a noun but idk
+// Cause a Transaction has data and it's a function at the same time, technically its a noun but idk
 
-//TransactionAction generic for the action part of the transaction
+//TransactionAction generic for the action part of the Transaction
 type TransactionAction interface {
 	Execute() error
 }
@@ -36,31 +36,31 @@ type TransactionAction interface {
 //These Definitions are straight form the book
 //Microservices Patterns By Chris Richardson
 
-//RetryableTransaction Transactions that follow the pivot transaction and are guaranteed to succeed.
+//RetryableTransaction Transactions that follow the pivot Transaction and are guaranteed to succeed.
 type RetryableTransaction struct {
-	transaction
+	Transaction
 }
 
 //NewRetriableTransaction Constructor for RetryableTransaction
 func NewRetriableTransaction(transactionName string, serviceName string, transactionAction TransactionAction) *RetryableTransaction {
-	return &RetryableTransaction{transaction{
+	return &RetryableTransaction{Transaction{
 		TransactionName:   transactionName,
 		ServiceName:       serviceName,
 		TransactionAction: transactionAction,
 	}}
 }
 
-//CompensatableTransaction transaction that can potentially be rolled back using a compensating transaction.
+//CompensatableTransaction Transaction that can potentially be rolled back using a compensating Transaction.
 type CompensatableTransaction struct {
-	transaction
-	//The is the action that un does this transaction if it fails
+	Transaction
+	//The is the action that un does this Transaction if it fails
 	CompensatableAction TransactionAction
 }
 
 //NewCompensatableTransaction Constructor for CompensatableTransaction
 func NewCompensatableTransaction(transactionName string, serviceName string, transactionAction TransactionAction, compensatableAction TransactionAction) *CompensatableTransaction {
 	return &CompensatableTransaction{
-		transaction: transaction{
+		Transaction: Transaction{
 			TransactionName:   transactionName,
 			ServiceName:       serviceName,
 			TransactionAction: transactionAction,
@@ -69,14 +69,14 @@ func NewCompensatableTransaction(transactionName string, serviceName string, tra
 	}
 }
 
-//PivotTransaction The go/no-go point in a saga. If the pivot transaction commits, the saga will run until completion. A pivot transaction can be a transaction that’s neither compensatable nor retriable. Alternatively, it can be the last compensatable transaction or the first retriable transaction.
+//PivotTransaction The go/no-go point in a saga. If the pivot Transaction commits, the saga will run until completion. A pivot Transaction can be a Transaction that’s neither compensatable nor retriable. Alternatively, it can be the last compensatable Transaction or the first retriable Transaction.
 type PivotTransaction struct {
-	transaction
+	Transaction
 }
 
 //NewPivotTransaction Constructor for NewPivotTransaction
 func NewPivotTransaction(transactionName string, serviceName string, transactionAction TransactionAction) *RetryableTransaction {
-	return &RetryableTransaction{transaction{
+	return &RetryableTransaction{Transaction{
 		TransactionName:   transactionName,
 		ServiceName:       serviceName,
 		TransactionAction: transactionAction,
@@ -94,7 +94,7 @@ type TransactionRESTProxy struct {
 	Response     *http.Response
 }
 
-// NewTransactionActionRestProxy is a constructor for the transaction REST Proxy creation just to make sure values make sense before making that call to the other services, or it own service
+// NewTransactionActionRestProxy is a constructor for the Transaction REST Proxy creation just to make sure values make sense before making that call to the other services, or it own service
 func NewTransactionActionRestProxy(httpFunction string, url string, body *io.Reader) (*TransactionRESTProxy, error) {
 	var ErrMismatchHttpFunctionWithBody = fmt.Errorf("[ERROR] [SAGA] [TRANSACTION] [REST PROXY] [CREATION] | Cannot have body with this %+v | GET or DELETE", httpFunction)
 	var ErrMissingBodyForAssociatedHttpFunction = fmt.Errorf("[ERROR] [SAGA] [TRANSACTION] [REST PROXY] [CREATION] | Cannot have missingbody for this fucntion %+v | POST or UPDATE", httpFunction)
