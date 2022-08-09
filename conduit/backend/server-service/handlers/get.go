@@ -74,7 +74,7 @@ func (server *Servers) ListSingleton(rw http.ResponseWriter, r *http.Request) {
 			server.APILogger.Println("[ERROR] serializing servers", err)
 		}
 	case models.ErrServerNotFound:
-		server.APILogger.Println("[ERROR] fetching servers", err)
+		server.APILogger.Println("[DEBUG] fetching servers", err)
 
 		rw.WriteHeader(http.StatusNotFound)
 		err := internal.ToJSON(&GenericError{Message: err.Error()}, rw)
