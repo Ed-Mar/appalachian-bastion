@@ -7,9 +7,9 @@ import (
 	"os"
 )
 
-const RetryableTransactionRetryLimit = 3
-
 var prefixSagaExecutionError = "[ERROR] [SAGA] [EXECUTION] "
+
+const RetryableTransactionRetryLimit = 3
 
 type sagaRunner struct {
 	logger             *log.Logger
@@ -44,6 +44,8 @@ func ExecuteSaga(orchestrator SagaOrchestrator) error {
 	}
 	//This is the list of the undo transaction in the event of a failure or
 	var compensatableTransactionCommands []TransactionCommand
+	var hasCompensatableTransaction = false
+
 	sagaRunnerLogger.logger.Println("------- Saga Execution Start --------")
 	for _, transaction := range orchestrator.Transactions {
 		//Pull the List of Transactions Commands
@@ -64,11 +66,23 @@ func ExecuteSaga(orchestrator SagaOrchestrator) error {
 		//COMPENSATABLE TRANSACTION
 		//If it's a Compensatable Transaction Type add the second transaction to the list undo Transaction Commands
 		if transaction.GetTransactionType() == GetCompensatableTransactionType() {
+			hasCompensatableTransaction = true
 			compensatableTransactionCommands = append(compensatableTransactionCommands, transactionCommands[2])
 		}
+
 		//FAILURE IN COMPENSATABLE OR PIVOT TRANSACTION
 		// If get the do not proceed flag or an error (the canProceed is for Transaction Commands that get responses)
 		if !canProceed || err != nil {
+			// This is just in case you get a Pivot Transaction without any CompensatableTransaction(s) in an effort to try and save some compute
+			if !hasCompensatableTransaction {
+				if transaction.GetTransactionType() == GetPivotTransactionType() {
+					if err == nil {
+						err = errors.New("got a Do Not Proceed, but No Error(So now you get an Error)")
+					}
+					log.Println(err)
+					return err
+				}
+			}
 			//Check if the Transaction Type is Pivot/Compensatable then undo the Transactions providing the list of undo Transaction Commands
 			if transaction.GetTransactionType() == GetCompensatableTransactionType() || transaction.GetTransactionType() == GetPivotTransactionType() {
 				undoErr := undoCompensatableTransactions(compensatableTransactionCommands, &sagaRunnerLogger)
@@ -76,22 +90,28 @@ func ExecuteSaga(orchestrator SagaOrchestrator) error {
 					// This process fails I really don't want to tell the end user. So I guess I'll just log it.
 					sagaRunnerLogger.logger.Println(undoErr)
 				}
+				if err == nil {
+					err = errors.New("got a Do Not Proceed, but No Error(So now you get an Error)")
+				}
+				return err
+
 			}
-			//Check if the Transaction Type is Retryable then try to reattempt them to preset retry limit
-			if transaction.GetTransactionType() == GetRetriableTransactionType() {
-				if !canProceed {
-					didItFinallyWork, err := retryRetractableTransactionToPresetLimit(transactionCommands[0], &sagaRunnerLogger)
-					if err != nil {
-						return err
-					}
-					if !didItFinallyWork {
-						retriesFailed := fmt.Errorf("%v [UNDO] | After the Preset Number (#%d) of Retries this RetryTabiable Transaction(%v) has still Failed. Look at contruction of this Transaction and its Transaction Command(%v)", sagaRunnerLogger.generalErrorPrefix, RetryableTransactionRetryLimit, transaction.GetTransactionName(), transaction.GetTransactionCommands()[0].GetTransactionCommandName())
-						sagaRunnerLogger.logger.Println(retriesFailed)
-						// I am not positive If I am supposed to return this error I will for now
-						return fmt.Errorf("%v  | %v ", retriesFailed, err)
-					}
+		}
+		//Check if the Transaction Type is Retryable then try to reattempt them to preset retry limit
+		if transaction.GetTransactionType() == GetRetriableTransactionType() {
+			if !canProceed || err != nil {
+				didItFinallyWork, err := retryRetractableTransactionToPresetLimit(transactionCommands[0], &sagaRunnerLogger)
+				if err != nil {
+					return err
+				}
+				if !didItFinallyWork {
+					retriesFailed := fmt.Errorf("%v [UNDO] | After the Preset Number (#%d) of Retries this RetryTabiable Transaction(%v) has still Failed. Look at contruction of this Transaction and its Transaction Command(%v)", sagaRunnerLogger.generalErrorPrefix, RetryableTransactionRetryLimit, transaction.GetTransactionName(), transaction.GetTransactionCommands()[0].GetTransactionCommandName())
+					sagaRunnerLogger.logger.Println(retriesFailed)
+					// I am not positive If I am supposed to return this error I will for now
+					return fmt.Errorf("%v  | %v ", retriesFailed, err)
 				}
 			}
+
 		}
 		sagaRunnerLogger.logger.Println("------- Next Transaction --------")
 	} //End of loop
