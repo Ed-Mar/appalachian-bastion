@@ -44,7 +44,7 @@ func NewSagaOrchestrator(name string, transactions []Transaction) (*SagaOrchestr
 		//Checks for Compensatable Transactions
 		//Ruling:
 		// There cannot be a Pivot Transaction prior to any Compensatable Transaction
-		// There cannot be Retryable Transactions prior to any Retryable Transactions
+		// There cannot be Retryable Transactions prior to any Pivot Transactions
 		if transaction.GetTransactionType() == GetCompensatableTransactionType() {
 			countOfCompensatableTransactions = countOfCompensatableTransactions + 1
 			//Checking if it's before any Pivot Transactions
@@ -59,7 +59,7 @@ func NewSagaOrchestrator(name string, transactions []Transaction) (*SagaOrchestr
 
 		//Checks for Pivot Transaction
 		//Ruling:
-		// There cannot be more than on pivot transaction
+		// There cannot be more than one pivot transaction
 		// There are no Retryable prior to the Pivot
 		if transaction.GetTransactionType() == GetPivotTransactionType() {
 			countOfPivotTransactions = countOfPivotTransactions + 1
@@ -118,13 +118,16 @@ func (c *compensatableTransaction) GetTransactionName() string {
 }
 
 //NewCompensatableTransaction Constructor for compensatableTransaction
-func NewCompensatableTransaction(name string, transactionCommand TransactionCommand, compensationCommand TransactionCommand) *compensatableTransaction {
+func NewCompensatableTransaction(name string, transactionCommand TransactionCommand, compensationCommand TransactionCommand) (*compensatableTransaction, error) {
+	if transactionCommand == nil || compensationCommand == nil {
+		return nil, fmt.Errorf("[ERROR] Both Transactions need to be populated even if they are empty")
+	}
 	ct := &compensatableTransaction{
 		Name:                name,
 		TransactionCommand:  transactionCommand,
 		CompensationCommand: compensationCommand,
 	}
-	return ct
+	return ct, nil
 }
 
 type pivotTransaction struct {
@@ -270,7 +273,7 @@ func (i *internalHttpRESTRequest) Execute() (success bool, err error) {
 	case http.StatusAccepted: //202
 	case http.StatusNoContent: //204
 	default:
-		return false, errors.New("Non Supported Status Code: " + res.Status)
+		return false, fmt.Errorf("non Supported Status Code: %v", res.Status)
 	}
 	// So if one of the expected response codes then I am going to return a true to continue forward
 	bodyBytes, err := io.ReadAll(res.Body)
