@@ -1,0 +1,12 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: postgres-keycloak-configmap
+  namespace: keycloak
+  labels:
+    part-of: postgres-keycloak
+data:
+  # Configuration values can be set as key-value properties
+  POSTGRES_DB: keycloak
+  PGDATA: /data/pgdata
+  
