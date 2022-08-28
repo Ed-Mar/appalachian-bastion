@@ -11,3 +11,5 @@ conduit/backend/internal-service/config/localDBSetupUserDBConfig.env
 =======
 >>>>>>> master
 *.env
+!/keycloak/bitnami-keycloak/secrets/
+!/keycloak/kubectl/postgres/postgres-keycloak-cerdentials-secret.yaml
