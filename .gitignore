@@ -14,3 +14,4 @@ conduit/backend/internal-service/config/localDBSetupUserDBConfig.env
 !/keycloak/bitnami-keycloak/secrets/
 !/keycloak/kubectl/postgres/postgres-keycloak-cerdentials-secret.yaml
 !/keycloak/kubectl/keycloak/keycloak-admin-credentials-secret.yaml
+!/.vscode/
