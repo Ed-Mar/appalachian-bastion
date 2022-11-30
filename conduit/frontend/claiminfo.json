@@ -1,0 +1,38 @@
+{
+    "level": "debug",
+    "time": "2022-11-26T16:35:52-05:00",
+    "message": "Current Token Claims \n--- map[
+     acr:1 
+     allowed-origins:[http://localhost:8080 http://localhost:9666]
+     aud:account     
+     auth_time:1.669498552e+09 
+     azp:dev-conduit-rust 
+     exp:1.669498852e+09 
+     family_name:0000 
+     given_name:Test User 
+     groups:[offline_access default-roles-gatehouse uma_authorization] 
+     iat:1.669498552e+09 
+     iss:http://keycloak.test/realms/gatehouse 
+     jti:896e7e0f-23cf-4eeb-96ab-4ac76fac0eeb 
+     name:Test User 0000 
+     nonce:Vtkrcskj1puaYI5TYSrE1g 
+     preferred_username:test-user-0000 
+     realm_access:map[roles:[offline_access default-roles-gatehouse uma_authorization]] 
+     resource_access:map[account:map[roles:[manage-account manage-account-links view-profile]]] 
+     scope:openid microprofile-jwt profile 
+     session_state:55af9148-1828-4ece-99b9-b4231d442054 
+     sid:55af9148-1828-4ece-99b9-b4231d442054 
+     sub:8b603c06-ee77-4f60-a0bd-72652808b861 
+     typ:Bearer 
+     upn:test-user-0000]"
+}
+{
+    "upn": "test-user-####",
+    "sid": "UUID",
+    "groups": [],
+    "auth_time": "Unix-Time",
+    "exp": "Experation Time",
+    "azp": "authorzation Party",
+    "iss": "issuer"
+
+}
