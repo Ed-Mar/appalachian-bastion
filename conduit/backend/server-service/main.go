@@ -20,13 +20,13 @@ func main() {
 
 	validation := internal.NewValidation()
 
-	serverHandler := handlers.NewServers(severAPILogger, validation)
+	serverHandler := handlers.NewServersHandler(severAPILogger, validation)
 
 	serveMux := mux.NewRouter()
 
 	getRouter := serveMux.Methods(http.MethodGet).Subrouter()
 	getRouter.HandleFunc("/servers", serverHandler.ListCollection)
-	getRouter.HandleFunc("/servers/{serverID}", serverHandler.ListSingleton)
+	getRouter.HandleFunc("/server/{serverID}", serverHandler.ListSingleton)
 
 	putRouter := serveMux.Methods(http.MethodPut).Subrouter()
 	putRouter.HandleFunc("/server", serverHandler.UpdateSingleton)
@@ -35,6 +35,7 @@ func main() {
 	postRouter := serveMux.Methods(http.MethodPost).Subrouter()
 	postRouter.HandleFunc("/server", serverHandler.CreateSingleton)
 	postRouter.Use(serverHandler.MiddlewareValidateServer)
+	postRouter.Use()
 
 	deleteRouter := serveMux.Methods(http.MethodDelete).Subrouter()
 	deleteRouter.HandleFunc("/servers/{serverID}", serverHandler.DeleteSingleton)
@@ -51,7 +52,7 @@ func main() {
 
 	srv := &http.Server{
 		Addr:         ":9292",               // configure the bind address
-		Handler:      corsHandler(serveMux), // set the default handlers
+		Handler:      corsHandler(serveMux), // set the default gerneric-handlers
 		ErrorLog:     severAPILogger,        // set the severAPILogger for the servers
 		ReadTimeout:  5 * time.Second,       // max time to read request from the client
 		WriteTimeout: 10 * time.Second,      // max time to write response to the client
