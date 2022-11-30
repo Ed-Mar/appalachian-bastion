@@ -1,7 +1,6 @@
 package SQLQueries
 
 func SQLGetChannelsMatchingServerID() string {
-	// not positive if I need to send the error, but hey why not
 	return sqlGetChannelsMatchingServerID
 }
 

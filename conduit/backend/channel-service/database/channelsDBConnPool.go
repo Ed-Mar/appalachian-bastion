@@ -10,9 +10,9 @@ import (
 	"log"
 )
 
-//TODO Make this less complex to get to the file
-//const channelDBConfigPath = "channel/config/"
-const channelDBConfigPath = "database/config/"
+// TODO Make this less complex to get to the file
+// const channelDBConfigPath = "channel/config/"
+const channelDBConfigPath = "channel-service/database/config/"
 const channelDBConfigFileName = "localChannelServiceDBConfig"
 const DBConfigFileType = "env"
 
