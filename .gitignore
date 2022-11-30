@@ -1,17 +1,22 @@
 /etc/
 .idea/
-.gitignore
 /.vscode/
-/docs/Progress Reports/
 kubeconfig/
+*.env
 
 /conduit/backend/database/postgres/docker/db-data/
-<<<<<<< HEAD
 conduit/backend/internal-service/config/localDBSetupUserDBConfig.env
-=======
->>>>>>> master
-*.env
+
+
+/keycloak/kubectl/postgres/postgres-keycloak-cerdentials-secret.yaml
+/keycloak/kubectl/keycloak/keycloak-admin-credentials-secret.yaml
+
 !/keycloak/bitnami-keycloak/secrets/
 !/keycloak/kubectl/postgres/postgres-keycloak-cerdentials-secret.yaml
 !/keycloak/kubectl/keycloak/keycloak-admin-credentials-secret.yaml
 !/.vscode/
+
+!/local-dev/
+/local-dev/
+
+/keycloak/bitnami-keycloak/
