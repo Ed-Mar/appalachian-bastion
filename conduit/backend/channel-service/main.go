@@ -46,7 +46,7 @@ func main() {
 
 	srv := &http.Server{
 		Addr:         ":9393",               // configure the bind address
-		Handler:      corsHandler(serveMux), // set the default handlers
+		Handler:      corsHandler(serveMux), // set the default gerneric-handlers
 		ErrorLog:     ChannelServiceLogger,  // set the severChannelServiceLogger for the servers
 		ReadTimeout:  5 * time.Second,       // max time to read request from the client
 		WriteTimeout: 10 * time.Second,      // max time to write response to the client

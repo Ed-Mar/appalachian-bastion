@@ -7,13 +7,13 @@ import (
 
 type KeyChannel struct{}
 
-// Channels handlers for getting and updating Channels
+// Channels gerneric-handlers for getting and updating Channels
 type Channels struct {
 	APILogger *log.Logger
 	validator *internal.Validation
 }
 
-// NewChannels returns a new Channels handlers with the given APILogger
+// NewChannels returns a new Channels gerneric-handlers with the given APILogger
 func NewChannels(channelAPILogger *log.Logger, validator *internal.Validation) *Channels {
 	return &Channels{channelAPILogger, validator}
 }
