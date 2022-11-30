@@ -44,7 +44,7 @@ func (channel *Channels) MiddlewareValidateChannel(next http.Handler) http.Handl
 		ctx := context.WithValue(r.Context(), KeyChannel{}, chanl)
 		r = r.WithContext(ctx)
 
-		// Call the next handlers, which can be another middleware in the chain, or the final handlers.
+		// Call the next gerneric-handlers, which can be another middleware in the chain, or the final gerneric-handlers.
 		next.ServeHTTP(rw, r)
 	})
 }
