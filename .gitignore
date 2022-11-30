@@ -20,3 +20,8 @@ kubeconfig/
 !/keycloak/bitnami-keycloak/
 
 !/keycloak/bitnami-keycloak/
+
+/backend/database/postgres/docker/db-data/
+!/backend/openid-service/example-code/
+!/backend/internal/holdthis/
+
