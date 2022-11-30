@@ -12,13 +12,11 @@ kubeconfig/
 !/keycloak/kubectl/keycloak/keycloak-admin-credentials-secret.yaml
 
 !/keycloak/bitnami-keycloak/secrets/
-!/keycloak/kubectl/postgres/postgres-keycloak-cerdentials-secret.yaml
-!/keycloak/kubectl/keycloak/keycloak-admin-credentials-secret.yaml
 !/.vscode/
 
 !/local-dev/
 /local-dev/
 
 !/keycloak/bitnami-keycloak/
-!/keycloak/kubectl/keycloak/keycloak-admin-credentials-secret.yaml
 
+!/keycloak/bitnami-keycloak/
