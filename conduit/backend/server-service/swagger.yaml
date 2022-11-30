@@ -9,7 +9,7 @@ definitions:
         type: string
         x-go-name: Message
     type: object
-    x-go-package: servers-api/handlers
+    x-go-package: servers-api/gerneric-handlers
   Server:
     description: Server defines the structure for an API servers
     properties:
@@ -42,7 +42,7 @@ definitions:
         type: array
         x-go-name: Messages
     type: object
-    x-go-package: servers-api/handlers
+    x-go-package: servers-api/gerneric-handlers
 info:
   description: Documentation for Server API
   title: classification of Server API
