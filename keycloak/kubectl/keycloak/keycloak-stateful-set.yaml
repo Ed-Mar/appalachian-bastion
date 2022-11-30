@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: keycloak
+  namespace: keycloak
+  labels:
+    app: keycloak
+spec:
+  selector:
+    matchLabels:
+      app: keycloak
+  serviceName: keycloak-service
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: keycloak
+        name: keycloak
+        component: identity-access-management
+        environment: dev
+    spec:
+      containers:
+        - name: keycloak
+          image: quay.io/keycloak/keycloak:19.0.1
+          imagePullPolicy: IfNotPresent
+          #args need to have a start in it or it just won't fucking start
+          args: ["start","--auto-build","--db=postgres"]
+
+          env:
+            # Keycloak Admin Credentials
+            - name: KEYCLOAK_ADMIN
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-admin-credentials-secret
+                  key: username
+            - name: KEYCLOAK_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-admin-credentials-secret
+                  key: password
+            # Keycloak External Database Credentials
+            - name: KEYCLOAK_DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-keycloak-credentials-secret
+                  key: username
+            - name: KEYCLOAK_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-keycloak-credentials-secret
+                  key: password
+            # JDBC URL for Database
+            - name: KC_DB_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: keycloak-configuration-configmap
+                  key: KC_DB_URL
+            - name: KC_HOSTNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: keycloak-configuration-configmap
+                  key: KC_HOSTNAME
+            - name: KC_PROXY
+              valueFrom:
+                configMapKeyRef:
+                  name: keycloak-configuration-configmap
+                  key: KC_PROXY
+          resources:
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          ports:
+            - name: http
+              containerPort: 8080
+            - name: https
+              containerPort: 8443
+          readinessProbe:
+            httpGet:
+              path: /realms/master
+              port: 8080

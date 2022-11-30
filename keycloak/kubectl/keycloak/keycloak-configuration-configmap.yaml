@@ -1,0 +1,185 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: keycloak-configuration-configmap
+  namespace: keycloak
+  labels:
+    app: keycloak
+data:
+  # https://www.keycloak.org/server/all-config?f=config
+  ## Database
+  ## (Note) I am loading these in the keycloak-stateful-set
+  ### Note: Should use secrets for these two
+  ### KC_DB_USERNAME
+  ### KC_DB_PASSWORD:
+
+  ### KC_DB_POOL_INITIAL_SIZE:
+  ### KC_DB_POOL_MAX_SIZE:  # Default 100
+  ### KC_DB_POOL_MIN_SIZE:
+  ### KC_DB_SCHEMA:
+
+  ### The full database JDBC URL.
+  ### Note: It seems that Keycloak wants us just to use this. Instead of parsing each of its elements over the other options
+  ### If not provided, a default URL is set based on the selected database vendor. For instance, if using 'postgres', the default JDBC URL would be 'jdbc:postgresql://localhost/keycloak'.
+  KC_DB_URL: jdbc:postgres://postgres-keycloak-service.keycloak
+
+  ### Sets the database name of the default JDBC URL of the chosen vendor.
+  ### If the db-url option is set, this option is ignored.
+  ### KC_DB_URL_DATABASE:
+
+  ### Sets the hostname of the default JDBC URL of the chosen vendor.
+  ### If the db-url option is set, this option is ignored.
+  ### KC_DB_URL_HOST:
+
+  ### Sets the port of the default JDBC URL of the chosen vendor.
+  ### If the db-url option is set, this option is ignored.
+  KC_DB_URL_PORT: 5432
+
+  ### Sets the properties of the default JDBC URL of the chosen vendor.
+  ### If the db-url option is set, this option is ignored.
+  ### KC_DB_URL_PROPERTIES:
+
+  ## Hostname
+  ### Hostname for the Keycloak server.
+  KC_HOSTNAME: gatehouse.appalachian-bastion.test
+
+  ### The hostname for accessing the administration console.
+  ### Use this option if you are exposing the administration console using a hostname other than the value set to the 'hostname' option.
+  ### KC_HOSTNAME_ADMIN:
+
+  ### This should be set if proxy uses a different context-path for Keycloak.
+  ### KC_HOSTNAME_PATH:
+
+  ### The port used by the proxy when exposing the hostname.
+  ### Set this option if the proxy uses a port other than the default HTTP and HTTPS ports.
+  ### KC_HOSTNAME_PORT: # Default -1
+
+  ### Disables dynamically resolving the hostname from request headers.
+  ### Should always be set to true in production, unless proxy verifies the Host header.
+  ### KC_HOSTNAME_STRICT: # Default true
+
+  ### By default, backchannel URLs are dynamically resolved from request headers to allow internal and external applications.
+  ### If all applications use the public URL this option should be enabled.
+  ### KC_HOSTNAME_STRICT_BACKCHANNEL: # Default false
+
+  ## HTTP/TLS
+  ### Enables the HTTP listener.
+  ### KC_HTTP_ENABLED: # Default false
+
+  ### The used HTTP Host.
+  ### KC_HTTP_HOST: # Default 0.0.0.0
+
+  ### The used HTTP port.
+  ### KC_HTTP_PORT: # Default 8080
+
+  ### The file path to a server certificate or certificate chain in PEM format.
+  ### KC_HTTPS_CERTIFICATE_FILE:
+
+  ### The file path to a private key in PEM format.
+  ### KC_HTTPS_CERTIFICATE_KEY_FILE:
+
+  ### Configures the server to require/request client authentication.
+  ### Possible Values: none, request, required.
+  ### KC_HTTPS_CLIENT_AUTH: # Default none
+
+  ### The key store which holds the certificate information instead of specifying separate files.
+  ### KC_HTTPS_KEY_STORE_FILE:
+
+  ### The password of the key store file.
+  ### KC_HTTPS_KEY_STORE_PASSWORD: # Default 'password'
+  
+  ### The type of the key store file.
+  ### If not given, the type is automatically detected based on the file name.
+  ### KC_HTTPS_KEY_STORE_TYPE
+  
+  ### The used HTTPS port.
+  ### KC_HTTPS_PORT: # Default 8443
+
+  ### The list of protocols to explicitly enable.
+  ### KC_HTTPS_PROTOCOLS # Default TLSv1.3
+  
+  ### The trust store which holds the certificate information of the certificates to trust.
+  ### KC_HTTPS_TRUST_STORE_FILE
+
+  ### The password of the trust store file.
+  ### KC_HTTPS_TRUST_STORE_PASSWORD
+  
+  ### The type of the trust store file.
+  ### If not given, the type is automatically detected based on the file name.
+  ### KC_HTTPS_TRUST_STORE_TYPE
+
+  ## Proxy
+  ### The proxy address forwarding mode if the server is behind a reverse proxy.
+  ### Possible values are: edge, reencrypt, passthrough
+  KC_PROXY: passthrough # Default none
+
+  ## Vault
+  ### If set, secrets can be obtained by reading the content of files within the given directory.
+  ### KC_VAULT_DIR:
+
+  ## Logging
+
+  ### Enable one or more log handlers in a comma-separated list.
+  ### Available log handlers are: console,file,gelf
+  ### Env: KC_LOG # Default console
+
+  ### Enable or disable colors when logging to console.
+  ### Env: KC_LOG_CONSOLE_COLOR # Default false
+
+  ### The format of unstructured console log entries.
+  ### If the format has spaces in it, escape the value using "<format>".
+  ### Env: KC_LOG_CONSOLE_FORMAT # Default %d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%c] (%t) %s%e%n
+
+  ### Set the log output to JSON or default (plain) unstructured logging.
+  ### Env: KC_LOG_CONSOLE_OUTPUT  # Default default
+
+  ### Set the log file path and filename.
+  ### Env: KC_LOG_FILE # Default data/log/keycloak.log
+
+  ### Set a format specific to file log entries.
+  ### Env: KC_LOG_FILE_FORMAT # Default %d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%c] (%t) %s%e%n
+
+  ### The facility (name of the process) that sends the message.
+  ### Env: KC_LOG_GELF_FACILITY # Default keycloak
+
+  ### Hostname of the Logstash or Graylog Host.
+  ### By default UDP is used, prefix the host with 'tcp:' to switch to TCP. Example: 'tcp:localhost'
+  ### Env: KC_LOG_GELF_HOST # Default localhost
+
+  ### Include source code location.
+  ### Env: KC_LOG_GELF_INCLUDE_LOCATION # Default true
+
+  ### Include message parameters from the log event.
+  ### Env: KC_LOG_GELF_INCLUDE_MESSAGE_PARAMETERS # Default true
+
+  ### If set to true, occuring stack traces are included in the 'StackTrace' field in the gelf output.
+  ### Env: KC_LOG_GELF_INCLUDE_STACK_TRACE # Default true
+
+  ### Maximum message size (in bytes).
+  ### If the message size is exceeded, gelf will submit the message in multiple chunks.
+  ### Env: KC_LOG_GELF_MAX_MESSAGE_SIZE # Default 8192
+
+  ### The port the Logstash or Graylog Host is called on.
+  ### Env: KC_LOG_GELF_PORT # Default 12201
+
+  ### Set the format for the gelf timestamp field.
+  ### Uses Java SimpleDateFormat pattern.
+  ### Env: KC_LOG_GELF_TIMESTAMP_FORMAT # Default yyyy-MM-dd HH:mm:ss,SSS
+
+  ### The log level of the root category or a comma-separated list of individual categories and their levels.
+  ### For the root category, you don’t need to specify a category.
+  ### Env: KC_LOG_LEVEL # Default info
+
+
+#-------------
+
+  ##DB_VENDOR: postgres
+  ##DB_ADDR: postgres-keycloak-stateful-set
+  ##DB_DATABASE: keycloak
+
+  ##KC_PROXY: passthrough
+  ##KC_HOSTNAME: gatehouse.appalachian-bastion.test
+
+
+
+  ##DB_SCHEMA:

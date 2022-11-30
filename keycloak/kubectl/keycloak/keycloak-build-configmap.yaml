@@ -1,0 +1,121 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: keycloak-build-configmap
+
+data:
+  # https://www.keycloak.org/server/all-config?f=build
+
+  ## Cache
+
+  ### Defines the cache mechanism for high-availability.
+  ### By default, a 'ispn' cache is used to create a cluster between multiple server nodes. A 'local' cache disables clustering and is intended for development and testing purposes.
+  ### KC_CACHE
+
+  ### Defines the file from which cache configuration should be loaded from.
+  ### The configuration file is relative to the 'conf/' directory.
+  ### Env: KC_CACHE_CONFIG_FILE
+
+  ### Define the default stack to use for cluster communication and node discovery.
+  ### This option only takes effect if 'cache' is set to 'ispn'. Default: udp.
+  ### Env: KC_CACHE_STACK
+
+  ## Storage (Experimental)
+
+  ### Experimental: Sets a storage mechanism for action tokens.
+  ### Possible values are: jpa, chm, hotrod.
+  ### Env: KC_STORAGE_AREA_ACTION_TOKEN
+
+  ### Experimental: Sets a storage mechanism for authentication sessions.
+  ### Possible values are: jpa, chm, hotrod.
+  ### Env: KC_STORAGE_AREA_AUTH_SESSION
+
+  ### Experimental: Sets a storage mechanism for authorizations.
+  ### Possible values are: jpa, chm, hotrod.
+  ### Env: KC_STORAGE_AREA_AUTHORIZATION
+
+  ### Experimental: Sets a storage mechanism for clients.
+  ### Possible values are: jpa, chm, hotrod.
+  ### Env: KC_STORAGE_AREA_CLIENT
+
+  ### Experimental: Sets a storage mechanism for client scopes.
+  ### Possible values are: jpa, chm, hotrod.
+  ### Env: KC_STORAGE_AREA_CLIENT_SCOPE
+
+  ### Experimental: Sets a storage mechanism for admin events.
+  ### Possible values are: jpa, chm, hotrod.
+  ### Env: KC_STORAGE_AREA_EVENT_ADMIN
+
+  ### Experimental: Sets a storage mechanism for authentication and authorization events.
+  ### Possible values are: jpa, chm, hotrod.
+  ### Env: KC_STORAGE_AREA_EVENT_AUTH
+
+  ### Experimental: Sets a storage mechanism for groups.
+  ### Possible values are: jpa, chm, hotrod.
+  ### Env: KC_STORAGE_AREA_GROUP
+
+  ### Experimental: Sets a storage mechanism for login failures.
+  ### Possible values are: jpa, chm, hotrod.
+  ### Env: KC_STORAGE_AREA_LOGIN_FAILURE
+
+  ### Experimental: Sets a storage mechanism for realms.
+  ### Possible values are: jpa, chm, hotrod.
+  ### Env: KC_STORAGE_AREA_REALM
+
+  ### Experimental: Sets a storage mechanism for roles.
+  ### Possible values are: jpa, chm, hotrod.
+  ### Env: KC_STORAGE_AREA_ROLE
+
+  ### Experimental: Sets a storage mechanism for single use objects.
+  ### Possible values are: jpa, chm, hotrod.
+  ### Env: KC_STORAGE_AREA_SINGLE_USE_OBJECT
+
+  ### Experimental: Sets a storage mechanism for users.
+  ### Possible values are: jpa, chm, hotrod.
+  ### Env: KC_STORAGE_AREA_USER
+
+  ### Experimental: Sets a storage mechanism for user and client sessions.
+  ### Possible values are: jpa, chm, hotrod.
+  ### Env: KC_STORAGE_AREA_USER_SESSION
+
+  ## Database
+
+  ### The database vendor.
+  ### Possible values are: dev-file, dev-mem, mariadb, mssql, mysql, oracle, postgres.
+  KC_DB: postgres
+
+  ## Transaction
+
+  ### If set to false, Keycloak uses a non-XA datasource in case the database does not support XA transactions.
+  ### Env: KC_TRANSACTION_XA_ENABLED
+
+  ## Feature
+
+  ### Enables a set of one or more features.
+  ### Env: KC_FEATURES
+
+  ### Disables a set of one or more features.
+  ### Env: KC_FEATURES_DISABLED
+
+  ## HTTP/TLS
+
+  ### Set the path relative to '/' for serving resources.
+  ### Env: KC_HTTP_RELATIVE_PATH
+
+  ## Health
+
+  ### If the server should expose health check endpoints.
+  ### If enabled, health checks are available at the '/health', '/health/ready' and '/health/live' endpoints.
+  ### Env: KC_HEALTH_ENABLE
+
+  ## Metrics
+
+  ### If the server should expose metrics.
+  ### If enabled, metrics are available at the '/metrics' endpoint.
+  ### Env: KC_METRICS_ENABLED
+
+  ## Vault
+
+  ### Enables a vault provider.
+  ### Env: KC_VAULT
+
