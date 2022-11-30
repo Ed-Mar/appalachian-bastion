@@ -9,15 +9,15 @@ import (
 // KeyServer is a key used for the Server object in the context
 type KeyServer struct{}
 
-// Servers handlers for getting and updating servers
-type Servers struct {
+// ServerHandler gerneric-handlers for getting and updating servers
+type ServerHandler struct {
 	APILogger *log.Logger
 	validator *internal.Validation
 }
 
-// NewServers returns a new servers handlers with the given APILogger
-func NewServers(severAPILogger *log.Logger, validator *internal.Validation) *Servers {
-	return &Servers{severAPILogger, validator}
+// NewServersHandler returns a new servers gerneric-handlers with the given APILogger
+func NewServersHandler(severAPILogger *log.Logger, validator *internal.Validation) *ServerHandler {
+	return &ServerHandler{severAPILogger, validator}
 }
 
 // ErrInvalidServerPath is an error message when the servers path is not valid

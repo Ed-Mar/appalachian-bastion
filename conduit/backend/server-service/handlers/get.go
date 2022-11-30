@@ -13,7 +13,7 @@ import (
 //	200: ServersResponse
 
 // ListCollection handles GET requests and returns all current servers
-func (server *Servers) ListCollection(rw http.ResponseWriter, r *http.Request) {
+func (server *ServerHandler) ListCollection(rw http.ResponseWriter, r *http.Request) {
 
 	rw.Header().Add("Content-Type", "application/json")
 
@@ -51,7 +51,7 @@ func (server *Servers) ListCollection(rw http.ResponseWriter, r *http.Request) {
 //	404: errorResponse
 
 // ListSingleton handles GET requests
-func (server *Servers) ListSingleton(rw http.ResponseWriter, r *http.Request) {
+func (server *ServerHandler) ListSingleton(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 
 	serverID, err := helper.GetUUIDFromReqParm(r, "serverID")

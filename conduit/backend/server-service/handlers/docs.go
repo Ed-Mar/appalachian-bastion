@@ -1,4 +1,4 @@
-// Package servers Package handlers' classification of Server API
+// Package servers Package gerneric-handlers' classification of Server API
 //
 // Documentation for Server API
 //

@@ -16,7 +16,7 @@ import (
 //  501: errorResponse
 
 // DeleteSingleton handles DELETE requests and removes items from the database
-func (server *Servers) DeleteSingleton(rw http.ResponseWriter, r *http.Request) {
+func (server *ServerHandler) DeleteSingleton(rw http.ResponseWriter, r *http.Request) {
 	//Checks frist if that id is even the in database before getting to try and delete it
 	leServerID, err := helper.GetUUIDFromReqParm(r, "serverID")
 	switch err {

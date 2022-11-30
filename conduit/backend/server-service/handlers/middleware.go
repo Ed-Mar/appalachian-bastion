@@ -8,7 +8,7 @@ import (
 )
 
 // MiddlewareValidateServer validates the servers in the request and calls next if ok
-func (server *Servers) MiddlewareValidateServer(next http.Handler) http.Handler {
+func (server *ServerHandler) MiddlewareValidateServer(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
 		rw.Header().Add("Content-Type", "application/json")
 
@@ -43,7 +43,7 @@ func (server *Servers) MiddlewareValidateServer(next http.Handler) http.Handler 
 		ctx := context.WithValue(r.Context(), KeyServer{}, serv)
 		r = r.WithContext(ctx)
 
-		// Call the next handlers, which can be another middleware in the chain, or the final handlers.
+		// Call the next gerneric-handlers, which can be another middleware in the chain, or the final gerneric-handlers.
 		next.ServeHTTP(rw, r)
 	})
 }

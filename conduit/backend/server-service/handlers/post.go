@@ -14,7 +14,7 @@ import (
 //  501: errorResponse
 
 // CreateSingleton handles POST requests to add new servers
-func (server *Servers) CreateSingleton(rw http.ResponseWriter, r *http.Request) {
+func (server *ServerHandler) CreateSingleton(rw http.ResponseWriter, r *http.Request) {
 	// fetch the servers from the context
 	rw.Header().Add("Content-Type", "application/json")
 

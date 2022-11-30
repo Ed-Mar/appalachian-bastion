@@ -15,7 +15,7 @@ import (
 //  422: errorValidation
 
 // UpdateSingleton handles PUT requests to update servers
-func (server *Servers) UpdateSingleton(rw http.ResponseWriter, r *http.Request) {
+func (server *ServerHandler) UpdateSingleton(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 
 	// fetch the servers from the context
