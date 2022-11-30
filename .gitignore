@@ -4,12 +4,12 @@
 kubeconfig/
 *.env
 
-/conduit/backend/database/postgres/docker/db-data/
-conduit/backend/internal-service/config/localDBSetupUserDBConfig.env
+!/conduit/backend/database/postgres/docker/db-data/
+!/conduit/backend/internal-service/config/localDBSetupUserDBConfig.env
 
 
-/keycloak/kubectl/postgres/postgres-keycloak-cerdentials-secret.yaml
-/keycloak/kubectl/keycloak/keycloak-admin-credentials-secret.yaml
+!/keycloak/kubectl/postgres/postgres-keycloak-cerdentials-secret.yaml
+!/keycloak/kubectl/keycloak/keycloak-admin-credentials-secret.yaml
 
 !/keycloak/bitnami-keycloak/secrets/
 !/keycloak/kubectl/postgres/postgres-keycloak-cerdentials-secret.yaml
@@ -19,4 +19,6 @@ conduit/backend/internal-service/config/localDBSetupUserDBConfig.env
 !/local-dev/
 /local-dev/
 
-/keycloak/bitnami-keycloak/
+!/keycloak/bitnami-keycloak/
+!/keycloak/kubectl/keycloak/keycloak-admin-credentials-secret.yaml
+
