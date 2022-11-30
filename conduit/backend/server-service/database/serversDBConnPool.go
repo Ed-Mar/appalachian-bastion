@@ -10,8 +10,8 @@ import (
 	"log"
 )
 
-//const serverDBConfigPath = "server-service/config/"
-const serverDBConfigPath = "database/config/"
+// const serverDBConfigPath = "server-service/config/"
+const serverDBConfigPath = "server-service/database/config/"
 const serverDBConfigFileName = "localServerServiceDBConfig"
 const serverDBConfigFileType = "env"
 
