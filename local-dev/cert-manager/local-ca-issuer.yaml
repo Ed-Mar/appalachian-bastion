@@ -1,0 +1,8 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: local-minikube-ca-issuer
+  namespace: cert-manager
+spec:
+  ca:
+    secretName: local-minikube-ca-keypair
