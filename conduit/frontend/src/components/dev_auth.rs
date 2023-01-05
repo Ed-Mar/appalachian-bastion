@@ -44,3 +44,15 @@ async fn send_req(access_token: String ) -> String {
 
     return String::from(String::from("Somthing"));
 }
+async fn new_user(access_token: String) -> String{
+    let req = Request::new("http://localhost:9661/",);
+    let resp= &req.method(gloo_net::http::Method::POST)
+    .header("Authentication", &access_token)    
+
+    .send()
+    .await
+    .unwrap();
+
+    return String::from(String::from("New User Method Run"));
+
+}
