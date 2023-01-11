@@ -11,15 +11,16 @@ import (
 )
 
 // TODO Make this less complex to get to the file
-// const userDBConfigPath = "channel/config/"
-const userDBConfigPath = "channel-service/database/config/"
-const userDBConfigFileName = "localChannelServiceDBConfig"
-const DBConfigFileType = "env"
+const userDBConfigPath = "/database/config/"
+const userDBConfigFileName = "localUserServiceFBConfig"
+const dBConfigFileType = "env"
 
 // GetUsersDBConnPool  get the connection pool for the User Service
 func GetUsersDBConnPool() (*pgxpool.Pool, error) {
-	connString, err := commonDB.GetDBPostgresDSN(userDBConfigPath, userDBConfigFileName, DBConfigFileType)
+	possibleConfigPathLocations := []string{"/home/kaiser/workspace/tech/appalachian-bastion/conduit/backend/user-service/database/config/", "../user-service/database/config/", "/user-service/database/config/", "backend/user-service/database/config/"}
+	connString, err := commonDB.GetDBPostgresDSNv2(userDBConfigFileName, possibleConfigPathLocations)
 	if err != nil {
+		log.Printf("[FILE-ERROR] | %v", err)
 		return nil, err
 	}
 
