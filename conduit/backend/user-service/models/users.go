@@ -42,26 +42,26 @@ type User struct {
 	//User.ID
 	//id used to id in the conduit environment
 	//required:true
-	ID uuid.UUID `json:"id,UUID" db:"user_id"`
+	//ID uuid.UUID `json:"id,UUID" db:"user_id"`
 
 	//User.ExternalID
-	//The UUID given from the external authentication
+	//The UUID given from the external authentication. (sud)
 	// required:true
 	ExternalID uuid.UUID `json:"external-id-id,UUID" db:"external_id"`
 
 	//User.ExternalAuthProvider
-	// Is the URL of the SSO provider used for authentication
+	// Is the URL of the SSO provider used for authentication. (iss)
 	// required:true
 	ExternalAuthProvider string `json:"external-auth-provider" db:"external_auth_provider"`
 
 	//User.ExternalAuthClientID
-	// is the client name used to interface with the external SSO
+	// is the client name used to interface with the external SSO. (auth_party)
 	// required:true
 	ExternalAuthClientID string `json:"external-auth-client-id" db:"external_auth_client_id"`
 
 	// User.ExternalUserName
 	// Application Bastion | Gatehouse UserName
-	// this will be in the(JWT AccessToken) or/and preferred_username(OAuth Identity)
+	// this will be in the(JWT AccessToken) or/and preferred_username(OAuth Identity). (upn)
 	// required:true
 	// max length: 128
 	ExternalUserName string `json:"external-user-name" db:"external_user_name"`
@@ -120,6 +120,7 @@ func GetAllUsers() (Users, error) {
 	return users, nil
 }
 
+// GetUserViaUserID TODO I am not positive I am going to use UserId over the incoming externalid(sid). The only reason I can think not is if I open up to other log authentication parties
 // GetUserViaUserID returns user with matching user id
 func GetUserViaUserID(userid uuid.UUID) (Users, error) {
 	pool, err := database.GetUsersDBConnPool()
@@ -204,7 +205,7 @@ func AddUser(user User) error {
 		user.ExternalAuthProvider,
 		user.ExternalAuthClientID,
 		user.ExternalUserName,
-		user.DisplayUserName,
+		user.ExternalUserName, // For User Initialization This will the UPN copied then can and should be updated by the user at a later date.
 		user.Type,
 		user.Status,
 		time.Now())
