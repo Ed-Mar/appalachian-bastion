@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"backend/internal"
 	"log"
 )
 
@@ -16,19 +15,13 @@ type KeyForHandler struct {
 type ServiceHandler struct {
 	ServiceName   string
 	ServiceLogger *log.Logger
-	validator     *internal.Validation
 }
 
-func NewHandler(serviceName string, serviceLogger *log.Logger, validator *internal.Validation) *ServiceHandler {
-	return &ServiceHandler{serviceName, serviceLogger, validator}
+func NewHandler(serviceName string, serviceLogger *log.Logger) *ServiceHandler {
+	return &ServiceHandler{serviceName, serviceLogger}
 }
 
 // GenericError is a generic error message returned by a ID
 type GenericError struct {
 	Message string `json:"error-message"`
-}
-
-// ValidationError is a collection of validation error messages
-type ValidationError struct {
-	Messages []string `json:"error-messages"`
 }
