@@ -42,12 +42,12 @@ type User struct {
 	//User.ID
 	//id used to id in the conduit environment
 	//required:true
-	//ID uuid.UUID `json:"id,UUID" db:"user_id"`
+	UserID uuid.UUID `json:"conduit-id,UUID" db:"user_id"`
 
 	//User.ExternalID
 	//The UUID given from the external authentication. (sud)
 	// required:true
-	ExternalID uuid.UUID `json:"external-id-id,UUID" db:"external_id"`
+	ExternalID uuid.UUID `json:"external-auth-id,UUID" db:"external_id"`
 
 	//User.ExternalAuthProvider
 	// Is the URL of the SSO provider used for authentication. (iss)
@@ -72,10 +72,10 @@ type User struct {
 	// max length: 128
 	DisplayUserName string `json:"display-user-name" db:"default_username"`
 
-	// User.Type
+	// User.UserType
 	// Defines the type of User this in the scope of the Conduit Application as a whole
 	// required:true
-	Type string `json:"type" db:"type"`
+	UserType string `json:"user-type" db:"user_type"`
 
 	// User.Servers
 	// Define the servers that the user is in
@@ -206,7 +206,7 @@ func AddUser(user User) error {
 		user.ExternalAuthClientID,
 		user.ExternalUserName,
 		user.ExternalUserName, // For User Initialization This will the UPN copied then can and should be updated by the user at a later date.
-		user.Type,
+		user.UserType,
 		user.Status,
 		time.Now())
 	var pgErr *pgconn.PgError
@@ -215,7 +215,7 @@ func AddUser(user User) error {
 		if errors.As(err, &pgErr) {
 			switch pgErr.Code {
 			default:
-				log.Println(errGenericSQLERROR, pgErr)
+				log.Println(errGenericSQLERROR, pgErr, pgErr.Code)
 				return pgErr
 			}
 		} else {
