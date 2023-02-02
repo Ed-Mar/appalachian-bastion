@@ -26,9 +26,9 @@ func (t *Transaction) GetTransaction() *Transaction {
 // I have no idea wtf to call this. I have spent four+ hours looking for what to call this.
 // It's the action part of the Transaction. I am floored on what to call this.
 // If anyone ever read this please let me.
-// Cause a Transaction has data and it's a function at the same time, technically its a noun but idk
+// Cause a Transaction has models and it's a function at the same time, technically its a noun but idk
 
-//TransactionAction generic for the action part of the Transaction
+// TransactionAction generic for the action part of the Transaction
 type TransactionAction interface {
 	Execute() error
 }
@@ -36,12 +36,12 @@ type TransactionAction interface {
 //These Definitions are straight form the book
 //Microservices Patterns By Chris Richardson
 
-//RetryableTransaction Transactions that follow the pivot Transaction and are guaranteed to succeed.
+// RetryableTransaction Transactions that follow the pivot Transaction and are guaranteed to succeed.
 type RetryableTransaction struct {
 	Transaction
 }
 
-//NewRetriableTransaction Constructor for RetryableTransaction
+// NewRetriableTransaction Constructor for RetryableTransaction
 func NewRetriableTransaction(transactionName string, serviceName string, transactionAction TransactionAction) *RetryableTransaction {
 	return &RetryableTransaction{Transaction{
 		TransactionName:   transactionName,
@@ -50,14 +50,14 @@ func NewRetriableTransaction(transactionName string, serviceName string, transac
 	}}
 }
 
-//CompensatableTransaction Transaction that can potentially be rolled back using a compensating Transaction.
+// CompensatableTransaction Transaction that can potentially be rolled back using a compensating Transaction.
 type CompensatableTransaction struct {
 	Transaction
 	//The is the action that un does this Transaction if it fails
 	CompensatableAction TransactionAction
 }
 
-//NewCompensatableTransaction Constructor for CompensatableTransaction
+// NewCompensatableTransaction Constructor for CompensatableTransaction
 func NewCompensatableTransaction(transactionName string, serviceName string, transactionAction TransactionAction, compensatableAction TransactionAction) *CompensatableTransaction {
 	return &CompensatableTransaction{
 		Transaction: Transaction{
@@ -69,12 +69,12 @@ func NewCompensatableTransaction(transactionName string, serviceName string, tra
 	}
 }
 
-//PivotTransaction The go/no-go point in a saga. If the pivot Transaction commits, the saga will run until completion. A pivot Transaction can be a Transaction that’s neither compensatable nor retriable. Alternatively, it can be the last compensatable Transaction or the first retriable Transaction.
+// PivotTransaction The go/no-go point in a saga. If the pivot Transaction commits, the saga will run until completion. A pivot Transaction can be a Transaction that’s neither compensatable nor retriable. Alternatively, it can be the last compensatable Transaction or the first retriable Transaction.
 type PivotTransaction struct {
 	Transaction
 }
 
-//NewPivotTransaction Constructor for NewPivotTransaction
+// NewPivotTransaction Constructor for NewPivotTransaction
 func NewPivotTransaction(transactionName string, serviceName string, transactionAction TransactionAction) *RetryableTransaction {
 	return &RetryableTransaction{Transaction{
 		TransactionName:   transactionName,

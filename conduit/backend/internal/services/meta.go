@@ -15,16 +15,16 @@ type ServiceMeta interface {
 	GetServiceHttpRoutes() map[string]Route
 }
 
-//Route I still think this is little silly, and that there is a better way of doing this. But I need to move on.
+// Route I still think this is little silly, and that there is a better way of doing this. But I need to move on.
 type Route struct {
 	name string
-	//The http Method Type of this request in the route
+	//The http Method UserType of this request in the route
 	method http.Method
 	// should like the last part of th API example:"/servers/{serverID}/channels"
 	uRL string
 }
 
-//Should I add this to the ServiceMeta interfacemaybe...
+// Should I add this to the ServiceMeta interfacemaybe...
 func (h Route) NewHttpRoute(name string, method http.Method, uRL string) *Route {
 	return &Route{
 		name:   name,

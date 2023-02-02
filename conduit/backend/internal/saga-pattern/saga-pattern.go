@@ -19,7 +19,7 @@ func (s *SagaOrchestrator) Log() {
 	log.Println("SagaOrchestrator Name: " + s.Name)
 	for _, trans := range s.Transactions {
 		log.Println("Transaction Name: " + trans.GetTransactionName())
-		log.Printf("Transaction Type: %+v\n", trans.GetTransactionType())
+		log.Printf("Transaction UserType: %+v\n", trans.GetTransactionType())
 		log.Printf("Transaction Command : %+v\n", trans.GetTransactionCommands()[0])
 		if trans.GetTransactionType() == GetCompensatableTransactionType() {
 			log.Printf("Transaction Command : %+v\n", trans.GetTransactionCommands()[1])
@@ -98,7 +98,7 @@ type Transaction interface {
 	GetTransactionName() string
 }
 
-//compensatableTransaction s are Transactions that have reverse Transaction encase a subsequent Transaction fails
+// compensatableTransaction s are Transactions that have reverse Transaction encase a subsequent Transaction fails
 type compensatableTransaction struct {
 	Name string
 	TransactionCommand
@@ -117,7 +117,7 @@ func (c *compensatableTransaction) GetTransactionName() string {
 	return c.Name
 }
 
-//NewCompensatableTransaction Constructor for compensatableTransaction
+// NewCompensatableTransaction Constructor for compensatableTransaction
 func NewCompensatableTransaction(name string, transactionCommand TransactionCommand, compensationCommand TransactionCommand) (*compensatableTransaction, error) {
 	if transactionCommand == nil || compensationCommand == nil {
 		return nil, fmt.Errorf("[ERROR] Both Transactions need to be populated even if they are empty")

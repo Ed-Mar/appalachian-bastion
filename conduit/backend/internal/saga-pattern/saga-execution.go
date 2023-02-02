@@ -54,7 +54,7 @@ func ExecuteSaga(orchestrator SagaOrchestrator) error {
 		transactionCommands := transaction.GetTransactionCommands()
 
 		sagaRunnerLogger.logger.Println("Transaction Name: " + transaction.GetTransactionName())
-		sagaRunnerLogger.logger.Printf("Transaction Type: %+v\n", transaction.GetTransactionType())
+		sagaRunnerLogger.logger.Printf("Transaction UserType: %+v\n", transaction.GetTransactionType())
 
 		//Execute the Transaction
 		// To handle result a lil later
@@ -64,7 +64,7 @@ func ExecuteSaga(orchestrator SagaOrchestrator) error {
 		sagaRunnerLogger.logger.Printf("Can Proceed to Next Transaction: %t\n", canProceed)
 		sagaRunnerLogger.logger.Printf("Was There an Error In that Transaction: %v\n", err)
 		//COMPENSATABLE TRANSACTION
-		//If it's a Compensatable Transaction Type add the second transaction to the list undo Transaction Commands
+		//If it's a Compensatable Transaction UserType add the second transaction to the list undo Transaction Commands
 		if transaction.GetTransactionType() == GetCompensatableTransactionType() {
 			hasCompensatableTransaction = true
 			compensatableTransactionCommands = append(compensatableTransactionCommands, transactionCommands[2])
@@ -83,7 +83,7 @@ func ExecuteSaga(orchestrator SagaOrchestrator) error {
 					return err
 				}
 			}
-			//Check if the Transaction Type is Pivot/Compensatable then undo the Transactions providing the list of undo Transaction Commands
+			//Check if the Transaction UserType is Pivot/Compensatable then undo the Transactions providing the list of undo Transaction Commands
 			if transaction.GetTransactionType() == GetCompensatableTransactionType() || transaction.GetTransactionType() == GetPivotTransactionType() {
 				undoErr := undoCompensatableTransactions(compensatableTransactionCommands, &sagaRunnerLogger)
 				if undoErr != nil {
@@ -97,7 +97,7 @@ func ExecuteSaga(orchestrator SagaOrchestrator) error {
 
 			}
 		}
-		//Check if the Transaction Type is Retryable then try to reattempt them to preset retry limit
+		//Check if the Transaction UserType is Retryable then try to reattempt them to preset retry limit
 		if transaction.GetTransactionType() == GetRetriableTransactionType() {
 			if !canProceed || err != nil {
 				didItFinallyWork, err := retryRetractableTransactionToPresetLimit(transactionCommands[0], &sagaRunnerLogger)
