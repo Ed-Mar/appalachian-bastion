@@ -15,7 +15,7 @@ type ServerHandler struct {
 	validator *internal.Validation
 }
 
-// NewServersHandler returns a new servers gerneric-handlers with the given APILogger
+// NewServersHandler returns a new servers generic-handlers with the given APILogger
 func NewServersHandler(severAPILogger *log.Logger, validator *internal.Validation) *ServerHandler {
 	return &ServerHandler{severAPILogger, validator}
 }
@@ -23,7 +23,7 @@ func NewServersHandler(severAPILogger *log.Logger, validator *internal.Validatio
 // ErrInvalidServerPath is an error message when the servers path is not valid
 var ErrInvalidServerPath = fmt.Errorf("invalid Path, path should be /servers/[id]")
 
-// GenericError is a generic error message returned by a servers
+// GenericError is a generic error message returned by a ID
 type GenericError struct {
 	Message string `json:"error-message"`
 }
