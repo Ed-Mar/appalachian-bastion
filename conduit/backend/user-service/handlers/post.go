@@ -79,7 +79,7 @@ func (uh *UserHandler) CreateNewUserViaHeader(rw http.ResponseWriter, r *http.Re
 		ExternalAuthClientID: authParty,
 		ExternalUserName:     upn,
 		DisplayUserName:      upn,
-		Type:                 "default",
+		UserType:             "default",
 		Servers:              nil,
 		Status:               "PENDING",
 	}
