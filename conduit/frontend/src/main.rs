@@ -2,6 +2,7 @@
 
 mod application;
 mod components;
+mod model;
 
 use wasm_bindgen::prelude::*;
 

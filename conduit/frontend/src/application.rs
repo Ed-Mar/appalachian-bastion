@@ -32,9 +32,7 @@ pub fn content() -> Html {
     });
 
     
-    let openid_routes = html! (
-        <li><Link<AppRoute> target={AppRoute::Identity}> { "Identity" } </Link<AppRoute>></li>
-    );
+    
     
     html!(
         <>
@@ -45,19 +43,21 @@ pub fn content() -> Html {
                     </ul>
                 </Failure>
                 <Authenticated>
+                    
+                    //<BackendTest/>
                     <p>
                         <button onclick={logout}>{ "Logout" }</button>
                     </p>                    
                     <ViewIdentity />
-                    <Expiration/>                    
+                    <Expiration/>                 
+                    <JsonTest/>
+                    
                 </Authenticated>
                 <NotAuthenticated>
                     <Switch<AppRoute> render={move |switch| match switch {
                         AppRoute::Index => html!(
                             <>
-                                <p>
-                                    { "You need to log in" }
-                                </p>
+                                
                                 <p>
                                     <button onclick={login.clone()}>{ "Login" }</button>
                                 </p>
@@ -85,7 +85,7 @@ pub fn app() -> Html {
     };   
     html!(
         <>
-            <h1> { "Login example "}</h1>
+            <h1> { "Conduit Auth Devlopment Testing "}</h1>
 
             <OAuth2
                 {config}
