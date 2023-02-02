@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"backend/internal/authentication/handlers"
 	"net/http"
 )
 
@@ -12,14 +11,6 @@ func (DevObj *DevTest) ValidateHeaderTestDev(next http.Handler) http.Handler {
 		rw.Header().Set("Access-Control-Allow-Methods", "POST")
 		//bear := r.Header.Get("Authentication")
 		//DevObj.APILogger.Printf("AccessToken: %#v", bear)
-
-		auth, err := handlers.newAuthViaLocalVerification(rw, r)
-		if err != nil {
-			DevObj.GenericHandler.ServiceLogger.Println(err)
-			return
-		}
-
-		r = r.WithContext(handlers.SetAuthInContext(r.Context(), auth))
 
 		next.ServeHTTP(rw, r)
 	})
