@@ -11,7 +11,7 @@ import (
 var ErrUserServiceGetBase = fmt.Errorf("%v [GET] ", ErrUserServiceBaseError)
 var WarnUserServiceGetBase = fmt.Errorf("%v [GET] ", WarnUserServiceBaseWarning)
 
-func (uh *UserHandler) GetUserViaExternalId(rw http.ResponseWriter, r *http.Request) {
+func (uh *UserHandler) GetUserProfileViaExternalID(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	sub, err := handlers.AuthGetExternalIDFromContext(r.Context())
 	if err != nil {
@@ -19,7 +19,7 @@ func (uh *UserHandler) GetUserViaExternalId(rw http.ResponseWriter, r *http.Requ
 		return
 	}
 	uh.StandardHandler.ServiceLogger.Printf("Attempting to get UserAuthenticationProfile Information via External Header. sub: ", sub)
-	user, err := models.GetUserViaExternalID(sub)
+	user, err := models.GetUserProfileViaExternalID(sub)
 	switch err {
 	case nil:
 		err = internal.ToJSON(user, rw)

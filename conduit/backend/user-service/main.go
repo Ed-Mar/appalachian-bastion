@@ -33,7 +33,7 @@ func main() {
 
 	getRouter := router.Methods(http.MethodGet).Subrouter()
 	getRouter.Use(handler.StandardHandler.AuthenticationMiddlewareViaTokenIntrospective)
-	getRouter.HandleFunc("/", handler.GetUserViaExternalId)
+	getRouter.HandleFunc("/", handler.GetUserProfileViaExternalID)
 
 	putRouter := router.Methods(http.MethodPut).Subrouter()
 	putRouter.Use(handler.StandardHandler.AuthenticationMiddlewareViaTokenIntrospective)
