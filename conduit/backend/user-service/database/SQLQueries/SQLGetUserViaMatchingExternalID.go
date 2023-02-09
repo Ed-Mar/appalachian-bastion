@@ -6,7 +6,7 @@ func SQLGetUserViaMatchingExternalID() string {
 
 const sqlGetUserViaMatchingExternalID = `
 	SELECT *
-	FROM users
+	FROM userAuthenticationProfiles
 	WHERE
 	deleted_at IS NULL AND external_id = $1; 
 `

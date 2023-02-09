@@ -18,7 +18,7 @@ func (uh *UserHandler) GetUserViaExternalId(rw http.ResponseWriter, r *http.Requ
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	uh.StandardHandler.ServiceLogger.Printf("Attempting to get User Information via External Header. sub: ", sub)
+	uh.StandardHandler.ServiceLogger.Printf("Attempting to get UserAuthenticationProfile Information via External Header. sub: ", sub)
 	user, err := models.GetUserViaExternalID(sub)
 	switch err {
 	case nil:

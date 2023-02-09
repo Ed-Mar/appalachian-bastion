@@ -6,7 +6,7 @@ func SQLGetUserViaMatchingUserID() string {
 
 const sqlGetUserViaMatchingUserID = `
 	SELECT *
-	FROM users
+	FROM userAuthenticationProfiles
 	WHERE
-	deleted_at IS NULL AND user_id = $1; 
+	deleted_at IS NULL AND conduit_user_id = $1; 
 `

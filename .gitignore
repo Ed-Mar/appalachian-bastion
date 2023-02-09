@@ -25,3 +25,15 @@ kubeconfig/
 !/backend/openid-service/example-code/
 !/backend/internal/holdthis/
 
+keycloak/bitnami-keycloak/chart/bitnami-keycloak-values.yaml
+keycloak/bitnami-keycloak/chart/keycloak-chart-values-19.yaml
+keycloak/bitnami-keycloak/chart/try2.yaml
+keycloak/bitnami-keycloak/chart/values.yaml
+keycloak/bitnami-keycloak/chart/values1.yaml
+keycloak/bitnami-keycloak/chart/yeet.yaml
+keycloak/bitnami-keycloak/configmap/config-map-keycloak.yaml
+keycloak/bitnami-keycloak/secrets/keycloak-admin-credentials.yaml
+keycloak/bitnami-keycloak/secrets/keycloak-management-credentials.yaml
+keycloak/bitnami-keycloak/secrets/keycloak-postgres-credentials.yaml
+keycloak/kubectl/keycloak/keycloak-admin-credentials-secret.yaml
+keycloak/kubectl/postgres/postgres-keycloak-cerdentials-secret.yaml
