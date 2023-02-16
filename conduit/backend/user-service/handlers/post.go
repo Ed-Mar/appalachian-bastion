@@ -15,30 +15,30 @@ var WarnUserServicePostBase = fmt.Errorf("%v [POST] ", WarnUserServiceBaseWarnin
 
 var WarnUserServicePostNotAcceptingNewUser = fmt.Errorf("%v: Application is not accpecting new users at this time", WarnUserServicePostBase)
 
-func (uh *UserHandler) CreateNewUserViaJSON(rw http.ResponseWriter, r *http.Request) {
-	rw.Header().Add("Content-Type", "application/json")
-
-	if !ACCEPTING_NEW_USERS {
-		http.Error(rw, WarnUserServicePostNotAcceptingNewUser.Error(), http.StatusForbidden)
-		uh.StandardHandler.ServiceLogger.Println(WarnUserServicePostNotAcceptingNewUser)
-		return
-	}
-	//Grabs the UserAuthenticationProfiles form the incoming JSON
-	passedUser := r.Context().Value(UserHandlerKey{}).(*models.UserAuthenticationProfile)
-	uh.StandardHandler.ServiceLogger.Println("[DEBUG] Attempting to insert new UserAuthenticationProfile")
-	err := models.AddUser(*passedUser)
-	if err != nil {
-		uh.StandardHandler.ServiceLogger.Println(ErrUserServicePostBase, err)
-		rw.WriteHeader(http.StatusInternalServerError)
-		err := internal.ToJSON(&GenericError{Message: err.Error()}, rw)
-		if err != nil {
-			// if encode to JSON fails just logged from the JSON side
-			return
-		}
-
-	}
-
-}
+//func (uh *UserHandler) CreateNewUserViaJSON(rw http.ResponseWriter, r *http.Request) {
+//	rw.Header().Add("Content-Type", "application/json")
+//
+//	if !ACCEPTING_NEW_USERS {
+//		http.Error(rw, WarnUserServicePostNotAcceptingNewUser.Error(), http.StatusForbidden)
+//		uh.StandardHandler.ServiceLogger.Println(WarnUserServicePostNotAcceptingNewUser)
+//		return
+//	}
+//	//Grabs the UserAuthenticationProfiles form the incoming JSON
+//	passedUser := r.Context().Value(UserHandlerKey{}).(*models.UserExternalAuthProfiles)
+//	uh.StandardHandler.ServiceLogger.Println("[DEBUG] Attempting to insert new UserAuthenticationProfile")
+//	err := models.(*passedUser)
+//	if err != nil {
+//		uh.StandardHandler.ServiceLogger.Println(ErrUserServicePostBase, err)
+//		rw.WriteHeader(http.StatusInternalServerError)
+//		err := internal.ToJSON(&GenericError{Message: err.Error()}, rw)
+//		if err != nil {
+//			// if encode to JSON fails just logged from the JSON side
+//			return
+//		}
+//
+//	}
+//
+//}
 
 // CreateNewUserViaHeader creates a new New User Profile and New UserExternalAuthProfile from the header information
 // !TODO This needs to be created into a saga due to creating of two objects and if the second one fails roll backs are
