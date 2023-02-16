@@ -13,15 +13,11 @@ pub fn card(CardProp { user }: &CardProp) -> Html {
     <div class="m-3 p-4 border rounded d-flex align-items-center">
         
         <div class="">            
-            <p class="fw-normal mb-1">{user.conduit_id.clone()}</p>
-            <p class="fw-normal mb-1">{user.external_auth_id.clone()}</p>
-            <p class="fw-normal mb-1">{user.external_auth_provider.clone()}</p>
-            <p class="fw-normal mb-1">{user.external_auth_client_id.clone()}</p>
-            <p class="fw-normal mb-1">{user.external_user_name.clone()}</p>
-            <p class="fw-normal mb-1">{user.display_user_name.clone()}</p>
-            <p class="fw-normal mb-1">{user.user_type.clone()}</p>
-           //<p class="fw-normal mb-1">{user.servers.clone()}</p>
-            <p class="fw-normal mb-1">{user.status.clone()}</p>
+            <p class="conduit_id">{format! ("{}: {}","Conduit Id",user.conduit_id.clone())}</p>
+            <p class="conduit_id">{format! ("{}: {}","External Authentication Id",user.external_auth_id.clone())}</p>
+            <p class="conduit_id">{format! ("{}: {}","Conduit Display Name",user.conduit_display_name.clone())}</p>
+            <p class="conduit_id">{format! ("{}: {}","User Type",user.user_type.clone())}</p>            
+            <p class="status">{user.status.clone()}</p>
         </div>
     </div>
     }
