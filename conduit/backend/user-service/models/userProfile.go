@@ -87,6 +87,7 @@ func GetUserProfileViaExternalID(externalUUID uuid.UUID) (UserProfiles, error) {
 		log.Panic(err)
 		return nil, errDatabaseConnectionError
 	}
+	log.Println("Pulling User.")
 	var userProfiles []*UserProfile
 	err = pgxscan.Select(context.Background(), pool, &userProfiles, SQLQueries.SQLGetUserProfileViaMatchingExternalID(), externalUUID)
 	var pgErr *pgconn.PgError
@@ -106,6 +107,7 @@ func GetUserProfileViaExternalID(externalUUID uuid.UUID) (UserProfiles, error) {
 			return nil, err
 		}
 	}
+	fmt.Printf("User Pulled %v\n", userProfiles)
 	if len(userProfiles) < 1 {
 		return nil, errTooManyUsers
 	}
