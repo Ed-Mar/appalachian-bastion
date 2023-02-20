@@ -1,7 +1,8 @@
 package models
 
 import (
-	server_database "backend/server-service/database"
+	serverDatabase "backend/server-service/database"
+	"backend/server-service/database/SQLQueries"
 	"context"
 	"errors"
 	"fmt"
@@ -49,12 +50,12 @@ type Servers []*Server
 
 // GetServers returns all servers from the database
 func GetServers() (Servers, error) {
-	pool, err := server_database.GetServersDBConnPool()
+	pool, err := serverDatabase.GetServersDBConnPool()
 	if err != nil {
 		return nil, err
 	}
 	var servers []*Server
-	err = pgxscan.Select(context.Background(), pool, &servers, sqlGetAllServers)
+	err = pgxscan.Select(context.Background(), pool, &servers, SQLQueries.SQLGetAllServers())
 	var pgErr *pgconn.PgError
 	if err != nil {
 		// Checks if the error is PG Error
@@ -80,7 +81,7 @@ func GetServers() (Servers, error) {
 // If a servers is not found this function returns a ServerNotFound error
 func GetServerByID(id uuid.UUID) (*Server, error) {
 
-	pool, err := server_database.GetServersDBConnPool()
+	pool, err := serverDatabase.GetServersDBConnPool()
 	if err != nil {
 		log.Println(errDatabaseConnectionError, err)
 		return nil, err
@@ -89,7 +90,7 @@ func GetServerByID(id uuid.UUID) (*Server, error) {
 	//which is for only for one row was giving me lip,
 	//so I just used the working select bit and grabbed the first item
 	var servers []*Server
-	err = pgxscan.Select(context.Background(), pool, &servers, sqlGetServerWithMatchingID, id)
+	err = pgxscan.Select(context.Background(), pool, &servers, SQLQueries.SQLGetServerWithMatchingID(), id)
 
 	//TODO work out if this PgError Block is working, I do not think it is working. I knew it did one time
 	var pgErr *pgconn.PgError
@@ -128,14 +129,14 @@ func UpdateServer(server Server) error {
 		return ErrServerNotFound
 	}
 
-	pool, err := server_database.GetServersDBConnPool()
+	pool, err := serverDatabase.GetServersDBConnPool()
 	if err != nil {
 		log.Println(errDatabaseConnectionError, err)
 		return err
 	}
 
 	//should return "UPDATE 1"
-	_, err = pool.Exec(context.Background(), sqlUpdateServerWithMatchingId, server.ID, server.Name, server.Description, server.Status, time.Now())
+	_, err = pool.Exec(context.Background(), SQLQueries.SQLUpdateServerWithMatchingID(), server.ID, server.Name, server.Description, server.Status, time.Now())
 	if err != nil {
 		log.Println(errGenericSQLERROR, err)
 		return err
@@ -144,14 +145,14 @@ func UpdateServer(server Server) error {
 }
 
 // AddServer adds a new servers to the database
-//TODO interface with keycloak to remove that permissions in the role listing
+// TODO interface with keycloak to remove that permissions in the role listing
 func AddServer(server Server) error {
-	pool, err := server_database.GetServersDBConnPool()
+	pool, err := serverDatabase.GetServersDBConnPool()
 	if err != nil {
 		log.Println(errDatabaseConnectionError, err)
 		return err
 	}
-	_, err = pool.Exec(context.Background(), sqlInsertServer, server.Name, server.Description, server.Status, time.Now())
+	_, err = pool.Exec(context.Background(), SQLQueries.SQLInsertServer(), server.Name, server.Description, server.Status, time.Now())
 	if err != nil {
 		log.Println(errGenericSQLERROR, err)
 		return err
@@ -161,7 +162,6 @@ func AddServer(server Server) error {
 }
 
 // DeleteServer deletes a servers from the database
-//TODO interface with keycloak to remove that permissions in the role listing
 func DeleteServer(id uuid.UUID) error {
 	matchingID, err := doesServerExistWithMatchingID(id)
 	if err != nil {
@@ -170,12 +170,12 @@ func DeleteServer(id uuid.UUID) error {
 	if matchingID == false {
 		return ErrServerNotFound
 	}
-	pool, err := server_database.GetServersDBConnPool()
+	pool, err := serverDatabase.GetServersDBConnPool()
 	if err != nil {
 		log.Println(errDatabaseConnectionError, err)
 		return err
 	}
-	_, err = pool.Exec(context.Background(), sqlSoftDeleteServerWithMatchingId, id, "DELETED", time.Now())
+	_, err = pool.Exec(context.Background(), SQLQueries.SQLSoftDeleteServerWithMatchingID(), id, "DELETED", time.Now())
 	if err != nil {
 		log.Println(errGenericSQLERROR, err)
 		return err
@@ -184,13 +184,13 @@ func DeleteServer(id uuid.UUID) error {
 }
 
 func doesServerExistWithMatchingID(id uuid.UUID) (bool, error) {
-	pool, err := server_database.GetServersDBConnPool()
+	pool, err := serverDatabase.GetServersDBConnPool()
 	if err != nil {
 		log.Println(errDatabaseConnectionError, err)
 		return false, err
 	}
 	var doesServerExist bool
-	err = pool.QueryRow(context.Background(), sqlDoesServerExistWithMatchingID, id).Scan(&doesServerExist)
+	err = pool.QueryRow(context.Background(), SQLQueries.SQLUpdateServerWithMatchingID(), id).Scan(&doesServerExist)
 
 	if err != nil {
 		log.Println(errGenericSQLERROR, err)
@@ -198,61 +198,3 @@ func doesServerExistWithMatchingID(id uuid.UUID) (bool, error) {
 	}
 	return doesServerExist, nil
 }
-
-//sqlInsertServer used to insert a server to the servers table
-//parms: serverName ServerDescription, Status, & Creation Timestamp
-//INSERT INTO servers (server_name,server_description,status,created_at) VALUES('Pure SQL Insert','test','Fake_Status',2022-01-11 00:36:37.783025 )
-const sqlInsertServer = "" +
-	"INSERT INTO servers" +
-	" (server_name," +
-	" server_description," +
-	" status," +
-	" created_at)" +
-	" VALUES($1, $2, $3, $4)"
-
-//sqlGetAllServers get all servers
-const sqlGetAllServers = `
-		SELECT *
-		FROM servers
-		WHERE deleted_at IS NULL; 
-`
-
-//sqlGetServerWithMatchingID Get server with matching param UUID
-const sqlGetServerWithMatchingID = `
-	SELECT *
-	FROM servers
-	WHERE
-	deleted_at IS NULL AND server_id::text = $1
-	LIMIT 1;
-`
-
-//sqlDoesServerExistWithMatchingID returns a bool if matching server id is in servers table
-//SELECT EXISTS(SELECT FROM servers WHERE server_id::text ='2b698f82-ffef-4faa-aa70-c9bb79073ce9' );
-const sqlDoesServerExistWithMatchingID = `
-	SELECT EXISTS
-		(SELECT FROM servers
-		WHERE server_id::text = ($1));
-`
-
-//sqlUpdateServerWithMatchingId updates server_name, server_description, status, and updated_at with given matching ID
-//UPDATE servers
-//SET server_name = 'Updated Server Name1', server_description= 'Updated Server Description1', status = 'UPDATED1', updated_at = now()
-//WHERE server_id = '1aef01af-5f1d-4c4d-8747-ea957a3c8944';
-const sqlUpdateServerWithMatchingId = `
-	UPDATE servers
-	SET server_name = ($2),
-	server_description = ($3),
-	status = ($4),
-	updated_at = ($5)
-	WHERE server_id::text = ($1);
-`
-
-//sqlSoftDeleteServerWithMatchingId Updates the server with given matching id
-//UPDATE servers SET status = 'DELETED', deleted_at = now()
-//WHERE server_id::text = 'dafbccb4-3e45-4dd4-ab36-9ff82c69cbc4';
-const sqlSoftDeleteServerWithMatchingId = `
-	UPDATE servers
-	SET status = ($2),
-	deleted_at = ($3)
-	WHERE server_id::text = ($1);
-`
